@@ -1,0 +1,160 @@
+{
+    "name": "FPA Agents Development",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "fpa-agents",
+    "workspaceFolder": "/app",
+    
+    // Configure tool-specific properties
+    "customizations": {
+        "vscode": {
+            "settings": {
+                // Python configuration
+                "python.defaultInterpreterPath": "/app/.venv/bin/python",
+                "python.terminal.activateEnvironment": false,
+                "python.analysis.autoImportCompletions": true,
+                "python.analysis.typeCheckingMode": "basic",
+                
+                // Formatting and linting
+                "editor.formatOnSave": true,
+                "editor.codeActionsOnSave": {
+                    "source.organizeImports": "explicit"
+                },
+                "python.formatting.provider": "none",
+                "[python]": {
+                    "editor.defaultFormatter": "charliermarsh.ruff",
+                    "editor.formatOnSave": true,
+                    "editor.codeActionsOnSave": {
+                        "source.organizeImports": "explicit",
+                        "source.fixAll": "explicit"
+                    }
+                },
+                
+                // File watching and exclusions
+                "files.watcherExclude": {
+                    "**/target/**": true,
+                    "**/.venv/**": true,
+                    "**/node_modules/**": true,
+                    "**/__pycache__/**": true,
+                    "**/.pytest_cache/**": true
+                },
+                "files.exclude": {
+                    "**/__pycache__": true,
+                    "**/.pytest_cache": true
+                },
+                
+                // Terminal configuration
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "/bin/bash",
+                        "args": []
+                    }
+                },
+                
+                // Docker and containers
+                "docker.showStartPage": false,
+                
+                // FastAPI and web development
+                "emmet.includeLanguages": {
+                    "jinja-html": "html"
+                },
+                
+                // Git configuration
+                "git.autofetch": true,
+                "git.enableSmartCommit": true,
+                
+                // Editor settings
+                "editor.rulers": [88],
+                "editor.tabSize": 4,
+                "editor.insertSpaces": true,
+                "editor.trimAutoWhitespace": true,
+                "files.trimTrailingWhitespace": true,
+                "files.insertFinalNewline": true,
+                
+                // JSON and YAML
+                "yaml.schemas": {
+                    "https://json.schemastore.org/docker-compose.json": "docker-compose*.yml"
+                }
+            },
+            
+            // Essential extensions for Python development
+            "extensions": [
+                // Python development
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "charliermarsh.ruff",
+                
+                // Docker and containers
+                "ms-vscode-remote.remote-containers",
+                "ms-vscode.docker",
+                
+                // Web development (FastAPI)
+                "ms-python.debugpy",
+                "ms-vscode.vscode-json",
+                "redhat.vscode-yaml",
+                "ms-vscode.vscode-typescript-next",
+                
+                // Git and version control
+                "eamodio.gitlens",
+                
+                // Productivity
+                "ms-vscode.vscode-todo-highlight",
+                "streetsidesoftware.code-spell-checker",
+                "ms-vsliveshare.vsliveshare",
+                
+                // AI assistance (optional)
+                "GitHub.copilot",
+                "GitHub.copilot-chat",
+                
+                // Markdown and documentation
+                "yzhang.markdown-all-in-one",
+                "davidanson.vscode-markdownlint",
+                
+                // Environment files
+                "mikestead.dotenv"
+            ]
+        }
+    },
+
+    // Forward ports for development
+    "forwardPorts": [8000],
+    
+    // Configure port attributes
+    "portsAttributes": {
+        "8000": {
+            "label": "FastAPI Server",
+            "onAutoForward": "notify",
+            "protocol": "http"
+        }
+    },
+
+    // Commands to run after container creation
+    "postCreateCommand": "uv sync && echo 'Container ready for development!'",
+    
+    // Commands to run when attaching to container
+    "postAttachCommand": "echo 'Welcome to FPA Agents development environment!'",
+
+    // Use root user for development (can install packages, etc.)
+    "remoteUser": "root",
+
+    // Keep container running when VSCode closes
+    "shutdownAction": "none",
+    
+    // Mount additional volumes for better performance
+    "mounts": [
+        "source=${localWorkspaceFolder}/.vscode,target=/app/.vscode,type=bind,consistency=cached"
+    ],
+    
+    // Environment variables for development
+    "containerEnv": {
+        "ENVIRONMENT": "development",
+        "PYTHONPATH": "/app",
+        "FASTAPI_DEBUG": "true"
+    },
+    
+    // Features to add to the container
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {},
+        "ghcr.io/devcontainers/features/github-cli:1": {}
+    }
+}

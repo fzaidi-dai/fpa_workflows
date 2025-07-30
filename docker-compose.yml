@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  # MCP Services Container
+  mcp-services:
+    build:
+      context: ./mcp
+      dockerfile: Dockerfile.python
+    container_name: fpa-mcp-services
+    restart: unless-stopped
+    # Internal port only - not exposed to host
+    expose:
+      - "3001"
+    # Mount data directories for filesystem access
+    volumes:
+      - ./data:/mcp-data/data:rw
+      - ./scratch_pad:/mcp-data/scratch_pad:rw
+      - ./memory:/mcp-data/memory:rw
+    # Set environment variables for filesystem server
+    environment:
+      - FILESYSTEM_SERVER_PORT=3001
+      - ALLOWED_DIRECTORIES=/mcp-data/data,/mcp-data/scratch_pad,/mcp-data/memory
+      - NODE_ENV=production
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.2'
+          memory: 128M
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - fpa-network
+
+  fpa-agents:
+    build: .
+    container_name: fpa-agents-dev
+    ports:
+      - "8000:8000"
+      - "8080:8080"  # ADK web interface
+    volumes:
+      # Mount source code for live development
+      - .:/app
+      # Mount data directory
+      - ./data:/app/data
+      # Mount scratch_pad directory
+      - ./scratch_pad:/app/scratch_pad
+      # Mount memory directory
+      - ./memory:/app/memory
+      # Preserve uv cache
+      - uv-cache:/tmp/uv-cache
+    environment:
+      # Load environment variables from .env file
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
+      - GOOGLE_PROJECT_ID=${GOOGLE_PROJECT_ID}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - FASTAPI_HOST=${FASTAPI_HOST:-0.0.0.0}
+      - FASTAPI_PORT=${FASTAPI_PORT:-8000}
+      - FASTAPI_DEBUG=${FASTAPI_DEBUG:-True}
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+    env_file:
+      - .env
+    networks:
+      - fpa-network
+    # Restart policy
+    restart: unless-stopped
+    command: bash -c "cd agents && uv run adk web --host 0.0.0.0 --port 8080"
+
+volumes:
+  uv-cache:
+
+networks:
+  fpa-network:
+    driver: bridge

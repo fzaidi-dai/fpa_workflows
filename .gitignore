@@ -8,3 +8,8 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Environment files (NEVER commit these!)
+.env
+.env.local
+.env.*.local

@@ -1,0 +1,40 @@
+{
+    "recommendations": [
+        // Python development essentials
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
+        // Docker and containers
+        "ms-vscode-remote.remote-containers",
+        "ms-vscode.docker",
+        // Web development (FastAPI)
+        "ms-python.debugpy",
+        "ms-vscode.vscode-json",
+        "redhat.vscode-yaml",
+        // Git and version control
+        "eamodio.gitlens",
+        // Productivity and code quality
+        "ms-vscode.vscode-todo-highlight",
+        "streetsidesoftware.code-spell-checker",
+        "ms-vsliveshare.vsliveshare",
+        // AI assistance (optional but recommended)
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        // Markdown and documentation
+        "yzhang.markdown-all-in-one",
+        "davidanson.vscode-markdownlint",
+        // Environment files
+        "mikestead.dotenv",
+        // Additional useful extensions
+        "ms-vscode.vscode-typescript-next",
+        "ms-vscode.remote-explorer"
+    ],
+    "unwantedRecommendations": [
+        // Avoid conflicting Python formatters
+        "ms-python.black-formatter",
+        "ms-python.flake8",
+        "ms-python.pylint",
+        // Avoid conflicting Docker extensions
+        "peterjausovec.vscode-docker"
+    ]
+}

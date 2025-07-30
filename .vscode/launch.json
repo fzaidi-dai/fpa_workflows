@@ -1,0 +1,101 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "FastAPI Development Server",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "ENVIRONMENT": "development",
+                "FASTAPI_DEBUG": "true",
+                "FASTAPI_HOST": "0.0.0.0",
+                "FASTAPI_PORT": "8000"
+            },
+            "envFile": "${workspaceFolder}/.env",
+            "args": [],
+            "justMyCode": true,
+            "stopOnEntry": false,
+            "autoReload": {
+                "enable": true
+            }
+        },
+        {
+            "name": "FastAPI Production Mode",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "ENVIRONMENT": "production",
+                "FASTAPI_DEBUG": "false",
+                "FASTAPI_HOST": "0.0.0.0",
+                "FASTAPI_PORT": "8000"
+            },
+            "envFile": "${workspaceFolder}/.env",
+            "args": [],
+            "justMyCode": true,
+            "stopOnEntry": false
+        },
+        {
+            "name": "Debug FastAPI with Breakpoints",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "ENVIRONMENT": "development",
+                "FASTAPI_DEBUG": "true",
+                "FASTAPI_HOST": "127.0.0.1",
+                "FASTAPI_PORT": "8000"
+            },
+            "envFile": "${workspaceFolder}/.env",
+            "args": [],
+            "justMyCode": false,
+            "stopOnEntry": false,
+            "debugOptions": [
+                "RedirectOutput"
+            ]
+        },
+        {
+            "name": "Run Python Script",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/.env",
+            "justMyCode": true
+        },
+        {
+            "name": "Docker: Attach to Container",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/app"
+                }
+            ],
+            "justMyCode": false
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Launch FastAPI + Attach Debugger",
+            "configurations": [
+                "FastAPI Development Server",
+                "Docker: Attach to Container"
+            ],
+            "stopAll": true
+        }
+    ]
+}
