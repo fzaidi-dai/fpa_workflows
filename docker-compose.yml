@@ -4,7 +4,7 @@ services:
   # MCP Services Container
   mcp-services:
     build:
-      context: ./mcp
+      context: ./mcp_tooling
       dockerfile: Dockerfile.python
     container_name: fpa-mcp-services
     restart: unless-stopped

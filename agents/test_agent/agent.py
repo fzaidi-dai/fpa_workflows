@@ -33,55 +33,24 @@ validate_environment()
 # Create custom filesystem tools that use our MCP server
 def create_filesystem_tools():
     """Create filesystem tools that connect to our MCP server."""
-    import httpx
-    import json
+    import asyncio
+    from mcp_tooling.fpa_mcp_tools import create_filesystem_client
     from google.adk.tools.function_tool import FunctionTool
 
-    # Use Docker service name when running in container, localhost for local development
-    mcp_host = "mcp-services" if os.getenv("ENVIRONMENT") == "development" else "localhost"
-    mcp_port = "3001"
-    mcp_url = f"http://{mcp_host}:{mcp_port}/fs_mcp"
+    # Create MCP client
+    client = create_filesystem_client()
 
-    async def call_mcp_tool(tool_name: str, arguments: dict) -> dict:
-        """Call our MCP server tool."""
-        try:
-            async with httpx.AsyncClient() as client:
-                response = await client.post(
-                    mcp_url,
-                    json={
-                        "method": "tools/call",
-                        "params": {
-                            "name": tool_name,
-                            "arguments": arguments
-                        }
-                    },
-                    headers={"Content-Type": "application/json"}
-                )
-                response.raise_for_status()
-                result = response.json()
-
-                # Extract the actual result from the MCP response format
-                if "content" in result and len(result["content"]) > 0:
-                    content_text = result["content"][0]["text"]
-                    return json.loads(content_text)
-                else:
-                    return {"success": False, "error": "Invalid MCP response format"}
-
-        except Exception as e:
-            return {"success": False, "error": f"MCP call failed: {str(e)}"}
-
-    # Define filesystem tools as functions
     async def write_file_tool(path: str, content: str) -> str:
-        """Write content to a file using MCP server. Path should be relative to data/, scratch_pad/, or memory/ directories."""
-        result = await call_mcp_tool("write_file", {"path": f"/mcp-data/{path}", "content": content})
+        """Write content to a file using MCP server."""
+        result = await client.call_tool("write_file", {"path": f"/mcp-data/{path}", "content": content})
         if result.get("success"):
             return f"Successfully wrote {result.get('bytes_written', 0)} bytes to {path}"
         else:
             return f"Failed to write file: {result.get('error', 'Unknown error')}"
 
     async def read_file_tool(path: str) -> str:
-        """Read content from a file using MCP server. Path should be relative to data/, scratch_pad/, or memory/ directories."""
-        result = await call_mcp_tool("read_file", {"path": f"/mcp-data/{path}"})
+        """Read content from a file using MCP server."""
+        result = await client.call_tool("read_file", {"path": f"/mcp-data/{path}"})
         if result.get("success"):
             return f"File content:\n{result.get('content', '')}"
         else:
