@@ -1,0 +1,2 @@
+Hello from MCP Tools Demo!
+This file was created using the generic MCP client.
