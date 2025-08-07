@@ -29,12 +29,18 @@ logger = logging.getLogger(__name__)
 mcp = FastMCP("Filesystem Server")
 app = FastAPI(title="Filesystem MCP Server", version="1.0.0")
 
-# Security configuration - allowed directories
-ALLOWED_DIRECTORIES = [
-    "/mcp-data/data",
-    "/mcp-data/scratch_pad",
-    "/mcp-data/memory"
-]
+def load_config():
+    """Load server configuration from filesystem.json."""
+    import json
+    from pathlib import Path
+
+    config_path = Path(__file__).parent / "config" / "filesystem.json"
+    with open(config_path, 'r') as f:
+        return json.load(f)
+
+# Load configuration
+CONFIG = load_config()
+ALLOWED_DIRECTORIES = CONFIG["filesystem"]["allowedDirectories"]
 
 class FileReadRequest(BaseModel):
     """Request model for reading files."""
@@ -376,55 +382,9 @@ async def fs_mcp_endpoint(request_data: dict):
         params = request_data.get("params", {})
 
         if method == "tools/list":
+            # Return tools configuration from JSON file
             return {
-                "tools": [
-                    {
-                        "name": "read_file",
-                        "description": "Read the contents of a file",
-                        "inputSchema": {
-                            "type": "object",
-                            "properties": {
-                                "path": {
-                                    "type": "string",
-                                    "description": "Path to the file to read"
-                                }
-                            },
-                            "required": ["path"]
-                        }
-                    },
-                    {
-                        "name": "write_file",
-                        "description": "Write content to a file",
-                        "inputSchema": {
-                            "type": "object",
-                            "properties": {
-                                "path": {
-                                    "type": "string",
-                                    "description": "Path to the file to write"
-                                },
-                                "content": {
-                                    "type": "string",
-                                    "description": "Content to write to the file"
-                                }
-                            },
-                            "required": ["path", "content"]
-                        }
-                    },
-                    {
-                        "name": "list_directory",
-                        "description": "List contents of a directory",
-                        "inputSchema": {
-                            "type": "object",
-                            "properties": {
-                                "path": {
-                                    "type": "string",
-                                    "description": "Path to the directory to list"
-                                }
-                            },
-                            "required": ["path"]
-                        }
-                    }
-                ]
+                "tools": CONFIG.get("tools", [])
             }
 
         elif method == "tools/call":

@@ -1,44 +1,6 @@
 version: '3.8'
 
 services:
-  # MCP Services Container
-  mcp-services:
-    build:
-      context: ./mcp_tooling
-      dockerfile: Dockerfile.python
-    container_name: fpa-mcp-services
-    restart: unless-stopped
-    # Internal port only - not exposed to host
-    expose:
-      - "3001"
-    # Mount data directories for filesystem access
-    volumes:
-      - ./data:/mcp-data/data:rw
-      - ./scratch_pad:/mcp-data/scratch_pad:rw
-      - ./memory:/mcp-data/memory:rw
-    # Set environment variables for filesystem server
-    environment:
-      - FILESYSTEM_SERVER_PORT=3001
-      - ALLOWED_DIRECTORIES=/mcp-data/data,/mcp-data/scratch_pad,/mcp-data/memory
-      - NODE_ENV=production
-    # Resource limits
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 256M
-        reservations:
-          cpus: '0.2'
-          memory: 128M
-    # Logging configuration
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-    networks:
-      - fpa-network
-
   fpa-agents:
     build: .
     container_name: fpa-agents-dev

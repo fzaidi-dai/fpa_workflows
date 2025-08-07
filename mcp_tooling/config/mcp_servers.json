@@ -1,0 +1,10 @@
+{
+    "servers": [
+        {
+            "name": "filesystem",
+            "description": "Filesystem operations server for file management",
+            "base_url": "http://fpa-mcp-services:3001",
+            "service_path": "/fs_mcp"
+        }
+    ]
+}

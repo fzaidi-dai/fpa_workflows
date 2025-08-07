@@ -22,13 +22,17 @@ RUN mkdir -p /mcp-data/data /mcp-data/scratch_pad /mcp-data/memory && \
     chown -R appuser:appuser /mcp-data
 
 # Copy application code
-COPY server.py .
+COPY fs_mcp_server.py .
+COPY config/ ./config/
 
 # Change ownership of app directory
 RUN chown -R appuser:appuser /app
 
 # Switch to non-root user
 USER appuser
+
+# Set uv cache directory to a writable location
+ENV UV_CACHE_DIR=/tmp/uv-cache
 
 # Expose port
 EXPOSE 3001
@@ -38,4 +42,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:3001/health || exit 1
 
 # Run the server
-CMD ["python", "server.py"]
+CMD ["uv", "run", "fs_mcp_server.py"]

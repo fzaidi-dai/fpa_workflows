@@ -11,7 +11,6 @@ import os
 from dotenv import load_dotenv
 from google.adk.agents import LlmAgent
 from google.adk.models.lite_llm import LiteLlm
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, SseConnectionParams
 
 # Load environment variables from .env file
 load_dotenv()
@@ -30,43 +29,26 @@ def validate_environment():
 # Validate environment on import
 validate_environment()
 
-# Create custom filesystem tools that use our MCP server
-def create_filesystem_tools():
-    """Create filesystem tools that connect to our MCP server."""
-    import asyncio
-    from mcp_tooling.fpa_mcp_tools import create_filesystem_client
-    from google.adk.tools.function_tool import FunctionTool
+# Discover available MCP servers using MCPConfig
+from mcp_tooling.mcp_tools_adk import MCPConfig, create_mcp_tools
+servers = MCPConfig.discover_available_servers()
 
-    # Create MCP client
-    client = create_filesystem_client()
+# Create tools for all discovered servers
+all_tools = []
+for server in servers:
+    tools = create_mcp_tools(server)
+    all_tools.extend(tools)
 
-    async def write_file_tool(path: str, content: str) -> str:
-        """Write content to a file using MCP server."""
-        result = await client.call_tool("write_file", {"path": f"/mcp-data/{path}", "content": content})
-        if result.get("success"):
-            return f"Successfully wrote {result.get('bytes_written', 0)} bytes to {path}"
-        else:
-            return f"Failed to write file: {result.get('error', 'Unknown error')}"
-
-    async def read_file_tool(path: str) -> str:
-        """Read content from a file using MCP server."""
-        result = await client.call_tool("read_file", {"path": f"/mcp-data/{path}"})
-        if result.get("success"):
-            return f"File content:\n{result.get('content', '')}"
-        else:
-            return f"Failed to read file: {result.get('error', 'Unknown error')}"
-
-    # Create FunctionTool objects
-    tools = [
-        FunctionTool(func=write_file_tool),
-        FunctionTool(func=read_file_tool)
-    ]
-
-    return tools
+# Create a filtered agent with only read_file tool
+fs_server = next((s for s in servers if s["name"] == "filesystem"), None)
+if fs_server:
+    read_only_tools = create_mcp_tools(fs_server, tool_filter=["read_file"])
+else:
+    read_only_tools = []
 
 # Define the main agent for ADK web interface
 root_agent = LlmAgent(
-    model=LiteLlm(model="openrouter/qwen/qwen3-coder:free"),
+    model=LiteLlm(model="openrouter/qwen/qwen3-coder"),
     name="test_agent",
     instruction=(
         "You are a helpful assistant that can read and write files using the available filesystem tools. "
@@ -74,7 +56,19 @@ root_agent = LlmAgent(
         "When users ask you to create or modify files, use the write_file tool. When they want to read files, use the read_file tool. "
         "Be clear about what operations you're performing and provide helpful feedback to the user."
     ),
-    tools=create_filesystem_tools()
+    tools=all_tools
+)
+
+# Define a read-only agent for testing filtered tools
+root_agent2 = LlmAgent(
+    model=LiteLlm(model="openrouter/qwen/qwen3-coder"),
+    name="test_agent_read_only",
+    instruction=(
+        "You are a read-only assistant that can only read files using the available filesystem tools. "
+        "Help users by reading file contents from the data, scratch_pad, and memory directories. "
+        "You cannot write or modify files - only read them."
+    ),
+    tools=read_only_tools
 )
 
 # Optional: Add a simple test function for standalone execution

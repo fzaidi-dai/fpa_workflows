@@ -1,14 +1,26 @@
 """
-FPA MCP Tools Package
+MCP Tooling Package
 
-This package provides generic tools for connecting to MCP (Model Context Protocol) servers
-and creating tools that can be used with Google ADK agents.
-
-Note: This package is named 'fpa_mcp_tools' to avoid conflicts with the external 'mcp' package
-that the Google ADK library expects to import 'ClientSession' from.
+This package provides tools for working with Model Context Protocol (MCP) servers
+and integrating them with Google ADK agents.
 """
 
-# This init file is intentionally left minimal to avoid conflicts
-# Import specific modules as needed instead of exposing everything
+# Expose key modules and functions
+from .fpa_mcp_tools import (
+    MCPClient,
+    create_filesystem_client,
+    create_mcp_client,
+    MCPConfig
+)
 
-__version__ = "1.0.0"
+from .adk_integrations import (
+    create_filesystem_tools
+)
+
+__all__ = [
+    'MCPClient',
+    'create_filesystem_client',
+    'create_mcp_client',
+    'MCPConfig',
+    'create_filesystem_tools'
+]
