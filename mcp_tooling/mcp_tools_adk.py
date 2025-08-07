@@ -181,24 +181,10 @@ class MCPClient:
             bound_args = sig.bind(*args, **kwargs)
             bound_args.apply_defaults()
 
-            # Prepare arguments for MCP call with path prefixing
+            # Prepare arguments for MCP call
             mapped_args = {}
             for param_name, param_value in bound_args.arguments.items():
                 if param_value is not None:
-                    # Handle path prefixing for filesystem operations
-                    if param_name == "path" and param_value:
-                        if not str(param_value).startswith("/mcp-data/"):
-                            # Add the MCP data prefix for relative paths
-                            if str(param_value).startswith("data/") or str(param_value).startswith("scratch_pad/") or str(param_value).startswith("memory/"):
-                                param_value = f"/mcp-data/{param_value}"
-                            elif param_value in ["data", "scratch_pad", "memory"]:
-                                param_value = f"/mcp-data/{param_value}"
-                            elif param_value == ".":
-                                param_value = "/mcp-data"
-                            else:
-                                # Default to data directory for simple filenames
-                                param_value = f"/mcp-data/data/{param_value}"
-
                     mapped_args[param_name] = param_value
 
             logger.info(f"Final mapped_args for {tool_name}: {mapped_args}")
@@ -282,20 +268,7 @@ class MCPClient:
         return function_tools
 
 
-def create_mcp_tools(host: str, port: int, service_path: str = ""):
-    """
-    Create tools that connect to any MCP server.
 
-    Args:
-        host: MCP server host
-        port: MCP server port
-        service_path: Service path for the MCP endpoint
-
-    Returns:
-        List of FunctionTool objects for the MCP server's tools
-    """
-    client = MCPClient(host=host, port=port, service_path=service_path)
-    return client.create_function_tools()
 
 # Configuration management
 
@@ -344,24 +317,6 @@ class MCPConfig:
             "service_path": ""
         })
 
-    @staticmethod
-    def create_tools_from_config(server_name: str):
-        """
-        Create tools based on server configuration.
-
-        Args:
-            server_name: Name of the MCP server
-
-        Returns:
-            List of FunctionTool objects
-        """
-        config = MCPConfig.get_server_config(server_name)
-        client = MCPClient(
-            host=config["host"],
-            port=config["port"],
-            service_path=config["service_path"]
-        )
-        return client.create_function_tools()
 
     @staticmethod
     def discover_available_servers(config_file: Union[str, Path] = None) -> List[Dict[str, Any]]:
@@ -396,37 +351,7 @@ class MCPConfig:
             logger.error(f"Failed to load server configuration from {config_file}: {e}")
             return []
 
-def discover_available_servers(config_file: Union[str, Path] = None) -> List[Dict[str, Any]]:
-    """
-    Discover available MCP servers by reading from configuration file.
 
-    Args:
-        config_file: Path to the MCP servers configuration file.
-                     Defaults to mcp_tooling/config/mcp_servers.json
-
-    Returns:
-        List of server configurations with base_url and service_path
-    """
-    if config_file is None:
-        # Default to the standard config file location
-        config_file = Path(__file__).parent / "config" / "mcp_servers.json"
-
-    config_file = Path(config_file)
-
-    if not config_file.exists():
-        logger.warning(f"Config file {config_file} not found, returning empty server list")
-        return []
-
-    try:
-        with open(config_file, 'r') as f:
-            config = json.load(f)
-
-        # Return the servers list directly
-        return config.get("servers", [])
-
-    except Exception as e:
-        logger.error(f"Failed to load server configuration from {config_file}: {e}")
-        return []
 
 def create_mcp_tools(server_config: Dict[str, Any], tool_filter: Optional[List[str]] = None):
     """

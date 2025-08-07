@@ -62,6 +62,43 @@ class FileInfo(BaseModel):
     size: Optional[int] = None
     modified: Optional[str] = None
 
+def resolve_path(input_path: str) -> str:
+    """
+    Resolve a relative or absolute path to a full server path.
+
+    This function handles the path prefixing logic that was previously
+    hardcoded in the MCP client, making the client generic while keeping
+    server-specific path logic on the server side.
+
+    Args:
+        input_path: Input path from client (relative or absolute)
+
+    Returns:
+        Resolved full path with appropriate prefixes
+    """
+    # If already a full path starting with /mcp-data/, return as-is
+    if str(input_path).startswith("/mcp-data/"):
+        return input_path
+
+    # Handle relative paths by applying appropriate prefixes
+    input_str = str(input_path)
+
+    # Handle directory-specific prefixes
+    if input_str.startswith("data/"):
+        return f"/mcp-data/{input_str}"
+    elif input_str.startswith("scratch_pad/"):
+        return f"/mcp-data/{input_str}"
+    elif input_str.startswith("memory/"):
+        return f"/mcp-data/{input_str}"
+    elif input_str in ["data", "scratch_pad", "memory"]:
+        return f"/mcp-data/{input_str}"
+    elif input_str == ".":
+        return "/mcp-data"
+    else:
+        # Default to data directory for simple filenames
+        return f"/mcp-data/data/{input_str}"
+
+
 def validate_path(file_path: str) -> bool:
     """
     Validate that the file path is within allowed directories.
@@ -102,39 +139,42 @@ def read_file_tool(path: str) -> Dict[str, Any]:
     Returns:
         Dictionary containing the file content or error message
     """
-    if not validate_path(path):
+    # Resolve the path using server-side logic
+    resolved_path = resolve_path(path)
+
+    if not validate_path(resolved_path):
         return {
             "success": False,
-            "error": f"Access denied: Path '{path}' is not in allowed directories"
+            "error": f"Access denied: Path '{resolved_path}' is not in allowed directories"
         }
 
     try:
-        file_path = Path(path)
+        file_path = Path(resolved_path)
 
         if not file_path.exists():
             return {
                 "success": False,
-                "error": f"File not found: {path}"
+                "error": f"File not found: {resolved_path}"
             }
 
         if not file_path.is_file():
             return {
                 "success": False,
-                "error": f"Path is not a file: {path}"
+                "error": f"Path is not a file: {resolved_path}"
             }
 
         content = file_path.read_text(encoding='utf-8')
 
-        logger.info(f"Successfully read file: {path}")
+        logger.info(f"Successfully read file: {resolved_path} (original: {path})")
         return {
             "success": True,
             "content": content,
-            "path": path,
+            "path": resolved_path,
             "size": len(content)
         }
 
     except Exception as e:
-        error_msg = f"Failed to read file '{path}': {str(e)}"
+        error_msg = f"Failed to read file '{resolved_path}': {str(e)}"
         logger.error(error_msg)
         return {
             "success": False,
@@ -152,17 +192,20 @@ def write_file_tool(path: str, content: str) -> Dict[str, Any]:
     Returns:
         Dictionary containing success status and file information
     """
-    if not validate_path(path):
+    # Resolve the path using server-side logic
+    resolved_path = resolve_path(path)
+
+    if not validate_path(resolved_path):
         return {
             "success": False,
-            "error": f"Access denied: Path '{path}' is not in allowed directories"
+            "error": f"Access denied: Path '{resolved_path}' is not in allowed directories"
         }
 
     try:
-        file_path = Path(path)
+        file_path = Path(resolved_path)
 
         # Ensure parent directory exists
-        ensure_directory_exists(path)
+        ensure_directory_exists(resolved_path)
 
         # Write the content
         file_path.write_text(content, encoding='utf-8')
@@ -170,17 +213,17 @@ def write_file_tool(path: str, content: str) -> Dict[str, Any]:
         # Get file stats
         stat = file_path.stat()
 
-        logger.info(f"Successfully wrote file: {path} ({len(content)} bytes)")
+        logger.info(f"Successfully wrote file: {resolved_path} (original: {path}) ({len(content)} bytes)")
         return {
             "success": True,
-            "path": path,
+            "path": resolved_path,
             "bytes_written": len(content),
             "size": stat.st_size,
-            "message": f"Successfully wrote {len(content)} bytes to {path}"
+            "message": f"Successfully wrote {len(content)} bytes to {resolved_path}"
         }
 
     except Exception as e:
-        error_msg = f"Failed to write file '{path}': {str(e)}"
+        error_msg = f"Failed to write file '{resolved_path}': {str(e)}"
         logger.error(error_msg)
         return {
             "success": False,
@@ -201,11 +244,14 @@ def list_directory(request: DirectoryListRequest) -> Dict[str, Any]:
     Raises:
         ValueError: If path is not allowed or directory cannot be listed
     """
-    if not validate_path(request.path):
-        raise ValueError(f"Access denied: Path '{request.path}' is not in allowed directories")
+    # Resolve the path using server-side logic
+    resolved_path = resolve_path(request.path)
+
+    if not validate_path(resolved_path):
+        raise ValueError(f"Access denied: Path '{resolved_path}' is not in allowed directories")
 
     try:
-        dir_path = Path(request.path)
+        dir_path = Path(resolved_path)
 
         if not dir_path.exists():
             raise ValueError(f"Directory not found: {request.path}")
@@ -259,22 +305,25 @@ def create_directory(path: str) -> Dict[str, Any]:
     Raises:
         ValueError: If path is not allowed or directory cannot be created
     """
-    if not validate_path(path):
-        raise ValueError(f"Access denied: Path '{path}' is not in allowed directories")
+    # Resolve the path using server-side logic
+    resolved_path = resolve_path(path)
+
+    if not validate_path(resolved_path):
+        raise ValueError(f"Access denied: Path '{resolved_path}' is not in allowed directories")
 
     try:
-        dir_path = Path(path)
+        dir_path = Path(resolved_path)
         dir_path.mkdir(parents=True, exist_ok=True)
 
-        logger.info(f"Successfully created directory: {path}")
+        logger.info(f"Successfully created directory: {resolved_path} (original: {path})")
         return {
             "success": True,
-            "path": path,
-            "message": f"Successfully created directory: {path}"
+            "path": resolved_path,
+            "message": f"Successfully created directory: {resolved_path}"
         }
 
     except Exception as e:
-        error_msg = f"Failed to create directory '{path}': {str(e)}"
+        error_msg = f"Failed to create directory '{resolved_path}': {str(e)}"
         logger.error(error_msg)
         raise ValueError(error_msg)
 
@@ -292,29 +341,32 @@ def delete_file(path: str) -> Dict[str, Any]:
     Raises:
         ValueError: If path is not allowed or file cannot be deleted
     """
-    if not validate_path(path):
-        raise ValueError(f"Access denied: Path '{path}' is not in allowed directories")
+    # Resolve the path using server-side logic
+    resolved_path = resolve_path(path)
+
+    if not validate_path(resolved_path):
+        raise ValueError(f"Access denied: Path '{resolved_path}' is not in allowed directories")
 
     try:
-        file_path = Path(path)
+        file_path = Path(resolved_path)
 
         if not file_path.exists():
-            raise ValueError(f"File not found: {path}")
+            raise ValueError(f"File not found: {resolved_path}")
 
         if not file_path.is_file():
-            raise ValueError(f"Path is not a file: {path}")
+            raise ValueError(f"Path is not a file: {resolved_path}")
 
         file_path.unlink()
 
-        logger.info(f"Successfully deleted file: {path}")
+        logger.info(f"Successfully deleted file: {resolved_path} (original: {path})")
         return {
             "success": True,
-            "path": path,
-            "message": f"Successfully deleted file: {path}"
+            "path": resolved_path,
+            "message": f"Successfully deleted file: {resolved_path}"
         }
 
     except Exception as e:
-        error_msg = f"Failed to delete file '{path}': {str(e)}"
+        error_msg = f"Failed to delete file '{resolved_path}': {str(e)}"
         logger.error(error_msg)
         raise ValueError(error_msg)
 
@@ -332,20 +384,23 @@ def get_file_info(path: str) -> Dict[str, Any]:
     Raises:
         ValueError: If path is not allowed or info cannot be retrieved
     """
-    if not validate_path(path):
-        raise ValueError(f"Access denied: Path '{path}' is not in allowed directories")
+    # Resolve the path using server-side logic
+    resolved_path = resolve_path(path)
+
+    if not validate_path(resolved_path):
+        raise ValueError(f"Access denied: Path '{resolved_path}' is not in allowed directories")
 
     try:
-        file_path = Path(path)
+        file_path = Path(resolved_path)
 
         if not file_path.exists():
-            raise ValueError(f"Path not found: {path}")
+            raise ValueError(f"Path not found: {resolved_path}")
 
         stat = file_path.stat()
 
         info = {
             "success": True,
-            "path": path,
+            "path": resolved_path,
             "name": file_path.name,
             "type": "directory" if file_path.is_dir() else "file",
             "size": stat.st_size,
@@ -355,11 +410,11 @@ def get_file_info(path: str) -> Dict[str, Any]:
             "exists": True
         }
 
-        logger.info(f"Successfully retrieved info for: {path}")
+        logger.info(f"Successfully retrieved info for: {resolved_path} (original: {path})")
         return info
 
     except Exception as e:
-        error_msg = f"Failed to get info for '{path}': {str(e)}"
+        error_msg = f"Failed to get info for '{resolved_path}': {str(e)}"
         logger.error(error_msg)
         raise ValueError(error_msg)
 
