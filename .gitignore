@@ -13,3 +13,7 @@ wheels/
 .env
 .env.local
 .env.*.local
+
+# Data and scratch directories (local only)
+data/
+scratch_pad/
