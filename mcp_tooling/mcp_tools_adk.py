@@ -241,10 +241,12 @@ class MCPClient:
                 try:
                     loop = asyncio.get_event_loop()
                     if loop.is_running():
-                        # If loop is running, we can't use run_until_complete
-                        # This is a limitation - tools should be created in async context
+                        # If loop is running, we need to handle this differently
                         logger.warning("Creating tools in sync context with running event loop - this may not work properly")
-                        tools_list = []
+                        import concurrent.futures
+                        with concurrent.futures.ThreadPoolExecutor() as executor:
+                            future = executor.submit(asyncio.run, self.discover_tools())
+                            tools_list = future.result()
                     else:
                         tools_list = loop.run_until_complete(self.discover_tools())
 

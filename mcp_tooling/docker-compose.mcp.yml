@@ -3,11 +3,13 @@ version: '3.8'
 services:
   mcp-services:
     build:
-      context: .
-      dockerfile: Dockerfile.python
+      context: ..
+      dockerfile: mcp_tooling/Dockerfile.python
     container_name: fpa-mcp-services
     restart: unless-stopped
-    # Internal port only - not exposed to host
+    # Expose ports to host for testing
+    ports:
+      - "3001:3001"
     expose:
       - "3001"
     # Mount data directories for filesystem access
@@ -43,6 +45,52 @@ services:
         max-file: "3"
     networks:
       - fpa-network
+
+  math-tools-mcp:
+    build:
+      context: ..
+      dockerfile: mcp_tooling/Dockerfile.python
+    container_name: fpa-tools-mcp-service
+    restart: unless-stopped
+    # Expose ports to host for testing
+    ports:
+      - "3002:3002"
+    expose:
+      - "3002"
+    # Mount data directories for math operations
+    volumes:
+      - ../data:/mcp-data/data:rw
+      - ../scratch_pad:/mcp-data/scratch_pad:rw
+      - ../memory:/mcp-data/memory:rw
+    # Set environment variables for math server
+    environment:
+      - MATH_SERVER_PORT=3002
+    # Health check configuration
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - fpa-network
+    # Start the math server
+    command: ["uv", "run", "python", "math_and_aggregation_mcp_server.py"]
 
 networks:
   fpa-network:

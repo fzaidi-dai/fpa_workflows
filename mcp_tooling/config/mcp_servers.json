@@ -5,6 +5,12 @@
             "description": "Filesystem operations server for file management",
             "base_url": "http://fpa-mcp-services:3001",
             "service_path": "/fs_mcp"
+        },
+        {
+            "name": "math_and_aggregation",
+            "description": "Calculate fundamental financial totals, averages, and statistical measures for revenue, expenses, and cash flows. Perform mathematical transformations for compound growth, volatility calculations, and risk modeling. Aggregate financial metrics across periods, categories, or business segments. Execute precision calculations for accounting, budgeting, and financial reporting requirements. Best for tasks requiring basic mathematical calculations on financial datasets, statistical analysis of performance metrics, or fundamental aggregation operations with decimal precision.",
+            "base_url": "http://fpa-tools-mcp-service:3002",
+            "service_path": "/math_mcp"
         }
     ]
 }

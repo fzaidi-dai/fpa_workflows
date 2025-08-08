@@ -1,0 +1,480 @@
+{
+    "tools": [
+        {
+            "name": "SUM",
+            "description": "Add up a range of numbers using Decimal precision for financial accuracy. Calculate total revenue, expenses, or cash flows. Sum financial metrics across periods or categories. Aggregate budget line items. When you need to 'add up', 'total', 'sum', or 'aggregate' financial data.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numeric values to sum. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[1,2,3,4,5]'), 3) Single number (e.g., '42')"
+                    }
+                },
+                "required": [
+                    "values"
+                ]
+            }
+        },
+        {
+            "name": "AVERAGE",
+            "description": "Calculate the mean of a dataset using Decimal precision. Calculate average revenue per customer. Find mean expense amounts. Determine typical performance metrics. When you need to find 'average', 'mean', or 'typical' values.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numeric values to average. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[10,20,30]'), 3) Single number (e.g., '42')"
+                    }
+                },
+                "required": [
+                    "values"
+                ]
+            }
+        },
+        {
+            "name": "MIN",
+            "description": "Identify the smallest number in a dataset using Decimal precision. Find lowest cost, price, or expense. Identify minimum performance thresholds. Determine floor values for budgeting. When you need 'minimum', 'lowest', 'smallest', or 'floor' values.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numeric values to find minimum. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[10,5,20,3]'), 3) Single number (e.g., '42')"
+                    }
+                },
+                "required": [
+                    "values"
+                ]
+            }
+        },
+        {
+            "name": "MAX",
+            "description": "Identify the largest number in a dataset using Decimal precision. Find highest revenue, profit, or performance. Identify peak values for capacity planning. Determine ceiling values for budgets. When you need 'maximum', 'highest', 'largest', or 'peak' values.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numeric values to find maximum. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[10,5,20,3]'), 3) Single number (e.g., '42')"
+                    }
+                },
+                "required": [
+                    "values"
+                ]
+            }
+        },
+        {
+            "name": "PRODUCT",
+            "description": "Multiply values together using Decimal precision. Calculate compound growth rates. Multiply price by quantity calculations. Compute cumulative factors. When you need to 'multiply', 'compound', or calculate 'products'.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numeric values to multiply. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[2,3,4]'), 3) Single number (e.g., '42')"
+                    }
+                },
+                "required": [
+                    "values"
+                ]
+            }
+        },
+        {
+            "name": "MEDIAN",
+            "description": "Calculate the middle value of a dataset using Decimal precision. Find typical values when outliers exist. Analyze salary or compensation distributions. Determine middle performance metrics. When you need 'median', 'middle', or '50th percentile' values.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numeric values to find median. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[1,2,3,4,5]'), 3) Single number (e.g., '42')"
+                    }
+                },
+                "required": [
+                    "values"
+                ]
+            }
+        },
+        {
+            "name": "MODE",
+            "description": "Find the most frequently occurring value using Decimal precision. Identify most common transaction amounts. Find typical order sizes or quantities. Analyze recurring expense patterns. When you need 'most common', 'frequent', or 'typical' values.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numeric values to find mode. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[1,2,2,3,3,3]'), 3) Single number (e.g., '42')"
+                    }
+                },
+                "required": [
+                    "values"
+                ]
+            }
+        },
+        {
+            "name": "PERCENTILE",
+            "description": "Calculate specific percentiles using Decimal precision. Risk analysis (95th percentile for VaR). Performance benchmarking. Outlier detection and analysis. When you need 'percentile', 'quartile', or 'quantile' analysis.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numeric values for percentile calculation. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[1,2,3,4,5,6,7,8,9,10]'), 3) Single number (e.g., '42')"
+                    },
+                    "percentile_value": {
+                        "type": "number",
+                        "description": "Percentile value between 0 and 1 (e.g., 0.75 for 75th percentile, 0.5 for median)"
+                    }
+                },
+                "required": [
+                    "values",
+                    "percentile_value"
+                ]
+            }
+        },
+        {
+            "name": "POWER",
+            "description": "Raise numbers to a power using Decimal precision. Calculate compound interest (1.05^years). Growth rate calculations. Risk modeling with exponential functions. When you need 'power', 'exponent', or 'compound' calculations.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Base numbers for power calculation. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[2,3,4]'), 3) Single number (e.g., '42')"
+                    },
+                    "power": {
+                        "type": "number",
+                        "description": "Exponent (single value applied to all numbers)"
+                    },
+                    "output_filename": {
+                        "type": "string",
+                        "description": "Optional filename to save results as parquet file"
+                    }
+                },
+                "required": [
+                    "values",
+                    "power"
+                ]
+            }
+        },
+        {
+            "name": "SQRT",
+            "description": "Calculate square root using Decimal precision. Volatility calculations (standard deviation). Risk metrics calculations. Geometric calculations for financial modeling. When you need 'square root', 'volatility', or 'standard deviation' calculations.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numbers to calculate square root. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[25,16,9]'), 3) Single number (e.g., '42')"
+                    },
+                    "output_filename": {
+                        "type": "string",
+                        "description": "Optional filename to save results as parquet file"
+                    }
+                },
+                "required": [
+                    "values"
+                ]
+            }
+        },
+        {
+            "name": "EXP",
+            "description": "Calculate e^x using Decimal precision. Continuous compounding calculations. Exponential growth modeling. Option pricing models (Black-Scholes). When you need 'exponential', 'continuous compounding', or 'e^x' calculations.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Exponent values for e^x calculation. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[1,2,3]'), 3) Single number (e.g., '42')"
+                    },
+                    "output_filename": {
+                        "type": "string",
+                        "description": "Optional filename to save results as parquet file"
+                    }
+                },
+                "required": [
+                    "values"
+                ]
+            }
+        },
+        {
+            "name": "LN",
+            "description": "Calculate natural logarithm using Decimal precision. Calculate continuously compounded returns. Log-normal distribution modeling. Growth rate transformations. When you need 'natural log', 'ln', or 'logarithmic' transformations.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numbers for natural log calculation. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[2.718,1,10]'), 3) Single number (e.g., '42')"
+                    },
+                    "output_filename": {
+                        "type": "string",
+                        "description": "Optional filename to save results as parquet file"
+                    }
+                },
+                "required": [
+                    "values"
+                ]
+            }
+        },
+        {
+            "name": "LOG",
+            "description": "Calculate logarithm with specified base using Decimal precision. Base-10 logarithmic transformations. Custom base calculations for specific models. Data normalization and scaling. When you need 'log', 'logarithm', or specific base calculations.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numbers for logarithm calculation. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[100,1000,10000]'), 3) Single number (e.g., '42')"
+                    },
+                    "base": {
+                        "type": "number",
+                        "description": "Base of logarithm (optional, defaults to 10)"
+                    },
+                    "output_filename": {
+                        "type": "string",
+                        "description": "Optional filename to save results as parquet file"
+                    }
+                },
+                "required": [
+                    "values"
+                ]
+            }
+        },
+        {
+            "name": "ABS",
+            "description": "Calculate absolute value using Decimal precision. Calculate variance or deviation magnitudes. Remove negative signs from differences. Risk calculations requiring positive values. When you need 'absolute value', 'magnitude', or 'positive' values.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numbers for absolute value calculation. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[-10,-5,10,15]'), 3) Single number (e.g., '42')"
+                    },
+                    "output_filename": {
+                        "type": "string",
+                        "description": "Optional filename to save results as parquet file"
+                    }
+                },
+                "required": [
+                    "values"
+                ]
+            }
+        },
+        {
+            "name": "SIGN",
+            "description": "Return sign of numbers (-1, 0, or 1). Determine direction of changes (positive/negative). Classify gains vs losses. Conditional logic based on value signs. When you need to identify 'positive', 'negative', or 'direction' of values.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numbers to get sign. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[-15,15,0,-10,20]'), 3) Single number (e.g., '42')"
+                    }
+                },
+                "required": [
+                    "values"
+                ]
+            }
+        },
+        {
+            "name": "MOD",
+            "description": "Calculate remainder after division using Decimal precision. Calculate periodic patterns (monthly, quarterly cycles). Determine remainder amounts in allocations. Modular arithmetic for financial calculations. When you need 'remainder', 'modulo', or 'cyclical' calculations.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "dividends": {
+                        "type": "string",
+                        "description": "Dividend values. Can be: 1) File path, 2) JSON array of numbers (e.g., '[23,10,17]'), 3) Single number"
+                    },
+                    "divisors": {
+                        "type": "string",
+                        "description": "Divisor values. Can be: 1) File path, 2) JSON array of numbers (same length as dividends, e.g., '[5,3,4]'), 3) Single number (applied to all dividends)"
+                    }
+                },
+                "required": [
+                    "dividends",
+                    "divisors"
+                ]
+            }
+        },
+        {
+            "name": "ROUND",
+            "description": "Round numbers to specified digits using Decimal precision. Format financial reports to specific precision. Round currency amounts to cents. Standardize decimal places for presentation. When you need to 'round', 'format', or 'precision' control.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numbers to round. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[3.14159,2.71828,1.41421]'), 3) Single number (e.g., '42')"
+                    },
+                    "num_digits": {
+                        "type": "integer",
+                        "description": "Number of decimal places (can be negative for rounding to tens, hundreds, etc.)"
+                    }
+                },
+                "required": [
+                    "values",
+                    "num_digits"
+                ]
+            }
+        },
+        {
+            "name": "ROUNDUP",
+            "description": "Round numbers up using Decimal precision. Conservative estimates and budgeting. Ceiling calculations for capacity planning. Ensure minimum thresholds are met. When you need 'round up', 'ceiling', or 'conservative' estimates.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numbers to round up. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[3.14159,2.71828,1.41421]'), 3) Single number (e.g., '42')"
+                    },
+                    "num_digits": {
+                        "type": "integer",
+                        "description": "Number of decimal places (can be negative for rounding to tens, hundreds, etc.)"
+                    }
+                },
+                "required": [
+                    "values",
+                    "num_digits"
+                ]
+            }
+        },
+        {
+            "name": "ROUNDDOWN",
+            "description": "Round numbers down using Decimal precision. Conservative revenue projections. Floor calculations for minimum values. Ensure maximum limits are not exceeded. When you need 'round down', 'floor', or 'conservative' calculations.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numbers to round down. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[3.14159,2.71828,1.41421]'), 3) Single number (e.g., '42')"
+                    },
+                    "num_digits": {
+                        "type": "integer",
+                        "description": "Number of decimal places (can be negative for rounding to tens, hundreds, etc.)"
+                    }
+                },
+                "required": [
+                    "values",
+                    "num_digits"
+                ]
+            }
+        },
+        {
+            "name": "WEIGHTED_AVERAGE",
+            "description": "Calculate weighted average of values using Decimal precision. Portfolio performance calculations. Weighted cost of capital (WACC). Average prices weighted by volume. When you need 'weighted average', 'portfolio', or 'importance-weighted' calculations.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Values for weighted average. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[100,200,300]'), 3) Single number (e.g., '42')"
+                    },
+                    "weights": {
+                        "type": "string",
+                        "description": "Weights for each value (must sum to 1). Can be: 1) File path, 2) JSON array of numbers (e.g., '[0.2,0.3,0.5]'), 3) Single number"
+                    }
+                },
+                "required": [
+                    "values",
+                    "weights"
+                ]
+            }
+        },
+        {
+            "name": "GEOMETRIC_MEAN",
+            "description": "Calculate geometric mean using Decimal precision (useful for growth rates). Calculate average growth rates (CAGR). Portfolio return calculations. Compound annual growth rate analysis. When you need 'geometric mean', 'CAGR', 'compound growth', or 'average growth rate'.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Positive numbers for geometric mean. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[1.05,1.08,1.12,1.03]'), 3) Single number (e.g., '42')"
+                    }
+                },
+                "required": [
+                    "values"
+                ]
+            }
+        },
+        {
+            "name": "HARMONIC_MEAN",
+            "description": "Calculate harmonic mean using Decimal precision (useful for rates/ratios). Average P/E ratios for portfolios. Average interest rates. Cost per unit calculations. When you need 'harmonic mean', 'average rates', 'P/E ratios', or 'rate averaging'.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Positive numbers for harmonic mean. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[15.2,22.8,18.5,12.3]'), 3) Single number (e.g., '42')"
+                    }
+                },
+                "required": [
+                    "values"
+                ]
+            }
+        },
+        {
+            "name": "CUMSUM",
+            "description": "Calculate cumulative sum using Decimal precision. Running totals for cash flow analysis. Cumulative revenue or expense tracking. Year-to-date calculations. When you need 'cumulative', 'running total', 'YTD', or 'progressive sum'.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numbers for cumulative sum. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[10,20,30,40]'), 3) Single number (e.g., '42')"
+                    },
+                    "output_filename": {
+                        "type": "string",
+                        "description": "Optional filename to save results as parquet file"
+                    }
+                },
+                "required": [
+                    "values"
+                ]
+            }
+        },
+        {
+            "name": "CUMPROD",
+            "description": "Calculate cumulative product using Decimal precision. Compound growth calculations. Cumulative return analysis. Progressive multiplication factors. When you need 'cumulative product', 'compound', 'progressive growth', or 'cumulative returns'.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Numbers for cumulative product. Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[1.05,1.08,1.12]'), 3) Single number (e.g., '42')"
+                    },
+                    "output_filename": {
+                        "type": "string",
+                        "description": "Optional filename to save results as parquet file"
+                    }
+                },
+                "required": [
+                    "values"
+                ]
+            }
+        },
+        {
+            "name": "VARIANCE_WEIGHTED",
+            "description": "Calculate weighted variance using Decimal precision. Portfolio risk analysis. Weighted dispersion calculations. Risk-weighted variance measurements. When you need 'weighted variance', 'portfolio risk', 'weighted dispersion', or 'risk analysis'.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "values": {
+                        "type": "string",
+                        "description": "Values for weighted variance (returns, prices, or other financial metrics). Can be: 1) File path (e.g., 'data.csv', 'data.parquet'), 2) JSON array of numbers (e.g., '[0.12,0.08,0.15,0.06]'), 3) Single number (e.g., '42')"
+                    },
+                    "weights": {
+                        "type": "string",
+                        "description": "Weights for each value (portfolio weights, importance factors, etc., must sum to 1). Can be: 1) File path, 2) JSON array of numbers (e.g., '[0.4,0.3,0.2,0.1]'), 3) Single number"
+                    }
+                },
+                "required": [
+                    "values",
+                    "weights"
+                ]
+            }
+        }
+    ]
+}
