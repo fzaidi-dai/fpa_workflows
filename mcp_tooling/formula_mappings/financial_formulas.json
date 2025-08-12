@@ -1,0 +1,165 @@
+{
+  "npv": {
+    "polars": "sum([cf / (1 + rate) ** i for i, cf in enumerate(cash_flows)])",
+    "sheets": "=NPV({rate}, {cash_flows_range})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "complex",
+    "description": "Net Present Value calculation",
+    "implementation_status": "completed"
+  },
+  "irr": {
+    "polars": "solve_irr(cash_flows)",
+    "sheets": "=IRR({cash_flows_range})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "complex",
+    "description": "Internal Rate of Return",
+    "implementation_status": "completed"
+  },
+  "pv": {
+    "polars": "payment * ((1 - (1 + rate) ** -periods) / rate)",
+    "sheets": "=PV({rate}, {periods}, {payment}, {future_value}, {type})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Present Value of annuity",
+    "implementation_status": "completed"
+  },
+  "fv": {
+    "polars": "payment * (((1 + rate) ** periods - 1) / rate)",
+    "sheets": "=FV({rate}, {periods}, {payment}, {present_value}, {type})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Future Value of annuity",
+    "implementation_status": "completed"
+  },
+  "pmt": {
+    "polars": "present_value * (rate * (1 + rate) ** periods) / ((1 + rate) ** periods - 1)",
+    "sheets": "=PMT({rate}, {periods}, {present_value}, {future_value}, {type})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Payment amount for loan/annuity",
+    "implementation_status": "completed"
+  },
+  "rate": {
+    "polars": "solve_rate(periods, payment, present_value, future_value)",
+    "sheets": "=RATE({periods}, {payment}, {present_value}, {future_value}, {type}, {guess})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "complex",
+    "description": "Interest rate per period",
+    "implementation_status": "completed"
+  },
+  "nper": {
+    "polars": "math.log(1 + (future_value * rate) / payment) / math.log(1 + rate)",
+    "sheets": "=NPER({rate}, {payment}, {present_value}, {future_value}, {type})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Number of payment periods",
+    "implementation_status": "completed"
+  },
+  "xnpv": {
+    "polars": "sum([cf / (1 + rate) ** ((date - start_date).days / 365) for cf, date in zip(cash_flows, dates)])",
+    "sheets": "=XNPV({rate}, {cash_flows_range}, {dates_range})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "complex",
+    "description": "Net Present Value with irregular periods",
+    "implementation_status": "completed"
+  },
+  "xirr": {
+    "polars": "solve_xirr(cash_flows, dates)",
+    "sheets": "=XIRR({cash_flows_range}, {dates_range}, {guess})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "complex",
+    "description": "Internal Rate of Return with irregular periods",
+    "implementation_status": "completed"
+  },
+  "mirr": {
+    "polars": "((fv_positive / pv_negative) ** (1 / periods) - 1)",
+    "sheets": "=MIRR({cash_flows_range}, {finance_rate}, {reinvest_rate})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "complex",
+    "description": "Modified Internal Rate of Return",
+    "implementation_status": "completed"
+  },
+  "payback_period": {
+    "polars": "calculate_payback_period(cash_flows)",
+    "sheets": "=INDEX(MATCH(TRUE, CUMSUM({cash_flows_range})>=0, 0), 1)",
+    "validation": "tolerance_0.01",
+    "complexity_level": "complex",
+    "helper_columns": ["cumulative_cf"],
+    "description": "Payback period calculation",
+    "implementation_status": "completed"
+  },
+  "discounted_payback": {
+    "polars": "calculate_discounted_payback(cash_flows, discount_rate)",
+    "sheets": "=INDEX(MATCH(TRUE, CUMSUM({discounted_cf_range})>=0, 0), 1)",
+    "validation": "tolerance_0.01",
+    "complexity_level": "complex",
+    "helper_columns": ["discounted_cf", "cumulative_discounted_cf"],
+    "description": "Discounted payback period",
+    "implementation_status": "completed"
+  },
+  "profitability_index": {
+    "polars": "npv_positive_flows / abs(initial_investment)",
+    "sheets": "=NPV({rate}, {positive_flows_range}) / ABS({initial_investment})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Profitability index calculation",
+    "implementation_status": "completed"
+  },
+  "cagr": {
+    "polars": "(ending_value / beginning_value) ** (1 / years) - 1",
+    "sheets": "=POWER({ending_value}/{beginning_value}, 1/{years}) - 1",
+    "validation": "tolerance_0.001",
+    "complexity_level": "simple",
+    "description": "Compound Annual Growth Rate",
+    "implementation_status": "completed"
+  },
+  "capm": {
+    "polars": "risk_free_rate + beta * (market_return - risk_free_rate)",
+    "sheets": "={risk_free_rate} + {beta} * ({market_return} - {risk_free_rate})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "simple",
+    "description": "Capital Asset Pricing Model",
+    "implementation_status": "completed"
+  },
+  "sharpe_ratio": {
+    "polars": "(portfolio_return - risk_free_rate) / portfolio_volatility",
+    "sheets": "=({portfolio_return} - {risk_free_rate}) / {portfolio_volatility}",
+    "validation": "tolerance_0.01",
+    "complexity_level": "simple",
+    "description": "Sharpe ratio calculation",
+    "implementation_status": "completed"
+  },
+  "beta": {
+    "polars": "covariance(asset_returns, market_returns) / variance(market_returns)",
+    "sheets": "=COVARIANCE.P({asset_range}, {market_range}) / VAR.P({market_range})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Beta coefficient calculation",
+    "implementation_status": "completed"
+  },
+  "var_historical": {
+    "polars": "returns.quantile(confidence_level)",
+    "sheets": "=PERCENTILE({returns_range}, {confidence_level})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Historical Value at Risk",
+    "implementation_status": "completed"
+  },
+  "var_parametric": {
+    "polars": "portfolio_value * norm.ppf(confidence_level) * volatility",
+    "sheets": "={portfolio_value} * NORM.S.INV({confidence_level}) * {volatility}",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Parametric Value at Risk",
+    "implementation_status": "completed"
+  },
+  "black_scholes": {
+    "polars": "calculate_black_scholes(S, K, T, r, sigma, option_type)",
+    "sheets": "=BLACK_SCHOLES({spot_price}, {strike_price}, {time_to_expiry}, {risk_free_rate}, {volatility}, {option_type})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "complex",
+    "helper_columns": ["d1", "d2", "nd1", "nd2"],
+    "description": "Black-Scholes option pricing",
+    "implementation_status": "completed"
+  }
+}
