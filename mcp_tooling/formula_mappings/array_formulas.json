@@ -1,107 +1,588 @@
 {
-  "array_sum": {
-    "polars": "df.select(pl.col('col1') + pl.col('col2'))",
-    "sheets": "=ARRAYFORMULA({range1} + {range2})",
+  "add_arrays": {
+    "polars": "pl.col('col1') + pl.col('col2')",
+    "sheets": "",
     "validation": "tolerance_0.001",
     "complexity_level": "moderate",
-    "description": "Element-wise addition of two arrays"
-  },
-  "array_multiply": {
-    "polars": "df.select(pl.col('col1') * pl.col('col2'))",
-    "sheets": "=ARRAYFORMULA({range1} * {range2})",
-    "validation": "tolerance_0.001",
-    "complexity_level": "moderate",
-    "description": "Element-wise multiplication of two arrays"
+    "description": "Element-wise addition of arrays",
+    "implementation_status": "pending",
+    "syntax": "ARRAYFORMULA(array1 + array2)",
+    "parameters": {
+      "array1": {
+        "description": "First array",
+        "required": true,
+        "type": "range"
+      },
+      "array2": {
+        "description": "Second array or scalar",
+        "required": true,
+        "type": "range_or_scalar"
+      }
+    },
+    "examples": {
+      "basic": "ARRAYFORMULA(A1:A10 + B1:B10)",
+      "scalar": "ARRAYFORMULA(A1:A10 + 10)"
+    },
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col('col1') + pl.col('col2')",
+    "sheets_function": "ARRAYFORMULA(+)",
+    "array_context": true,
+    "helper_columns": []
   },
   "array_divide": {
     "polars": "df.select(pl.col('col1') / pl.col('col2'))",
     "sheets": "=ARRAYFORMULA({range1} / {range2})",
     "validation": "tolerance_0.001",
     "complexity_level": "moderate",
-    "description": "Element-wise division of two arrays"
-  },
-  "array_if": {
-    "polars": "df.select(pl.when(pl.col('condition')).then(pl.col('true_val')).otherwise(pl.col('false_val')))",
-    "sheets": "=ARRAYFORMULA(IF({condition_range}, {true_range}, {false_range}))",
-    "validation": "exact_match",
-    "complexity_level": "moderate",
-    "description": "Conditional array formula"
-  },
-  "filter": {
-    "polars": "df.filter(pl.col('column') == criteria)",
-    "sheets": "=FILTER({range}, {criteria_range}={criteria})",
-    "validation": "exact_match",
-    "complexity_level": "moderate",
-    "description": "Filter array based on criteria"
-  },
-  "unique": {
-    "polars": "df['column'].unique()",
-    "sheets": "=UNIQUE({range})",
-    "validation": "exact_match",
-    "complexity_level": "moderate",
-    "description": "Get unique values from array"
-  },
-  "sort": {
-    "polars": "df.sort('column')",
-    "sheets": "=SORT({range}, {sort_column}, {is_ascending})",
-    "validation": "exact_match",
-    "complexity_level": "moderate",
-    "description": "Sort array by column"
-  },
-  "transpose": {
-    "polars": "df.transpose()",
-    "sheets": "=TRANSPOSE({range})",
-    "validation": "exact_match",
-    "complexity_level": "moderate",
-    "description": "Transpose array (rows to columns)"
-  },
-  "sequence": {
-    "polars": "pl.int_range(start, end, step)",
-    "sheets": "=SEQUENCE({rows}, {columns}, {start}, {step})",
-    "validation": "exact_match",
-    "complexity_level": "moderate",
-    "description": "Generate sequence of numbers"
-  },
-  "array_sum_product": {
-    "polars": "(df['col1'] * df['col2']).sum()",
-    "sheets": "=SUMPRODUCT({range1}, {range2})",
-    "validation": "tolerance_0.001",
-    "complexity_level": "moderate",
-    "description": "Sum of products of corresponding array elements"
-  },
-  "lookup_array": {
-    "polars": "df.join(lookup_df, on='key', how='left')",
-    "sheets": "=ARRAYFORMULA(VLOOKUP({lookup_range}, {table_range}, {col_index}, FALSE))",
-    "validation": "exact_match",
-    "complexity_level": "complex",
-    "description": "Array-based lookup operation"
-  },
-  "array_match": {
-    "polars": "df['column'].map_elements(lambda x: lookup_dict.get(x, default))",
-    "sheets": "=ARRAYFORMULA(MATCH({lookup_range}, {search_range}, 0))",
-    "validation": "exact_match",
-    "complexity_level": "moderate",
-    "description": "Find positions of values in array"
-  },
-  "array_index": {
-    "polars": "df.select(pl.col('column').list.get(index))",
-    "sheets": "=ARRAYFORMULA(INDEX({range}, {row_nums}, {col_num}))",
-    "validation": "exact_match",
-    "complexity_level": "moderate",
-    "description": "Get values at specific array positions"
-  },
-  "flatten": {
-    "polars": "df.select(pl.col('list_column').list.explode())",
-    "sheets": "=FLATTEN({range1}, {range2})",
-    "validation": "exact_match",
-    "complexity_level": "moderate",
-    "description": "Flatten array into single column"
+    "description": "Element-wise division of two arrays",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.select(pl.col('col1') / pl.col('col2'))",
+    "sheets_function": "ARRAYFORMULA",
+    "array_context": false,
+    "helper_columns": []
   },
   "array_frequency": {
     "polars": "df['column'].value_counts()",
     "sheets": "=ARRAYFORMULA(FREQUENCY({data_range}, {bins_range}))",
     "validation": "exact_match",
     "complexity_level": "complex",
-    "description": "Calculate frequency distribution"
+    "description": "Calculate frequency distribution",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df['column'].value_counts()",
+    "sheets_function": "ARRAYFORMULA",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "array_if": {
+    "polars": "df.select(pl.when(pl.col('condition')).then(pl.col('true_val')).otherwise(pl.col('false_val')))",
+    "sheets": "=ARRAYFORMULA(IF({condition_range}, {true_range}, {false_range}))",
+    "validation": "exact_match",
+    "complexity_level": "moderate",
+    "description": "Conditional array formula",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.select(pl.when(pl.col('condition')).then(pl.col('true_val')).otherwise(pl.col('false_val')))",
+    "sheets_function": "ARRAYFORMULA",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "array_index": {
+    "polars": "df.select(pl.col('column').list.get(index))",
+    "sheets": "=ARRAYFORMULA(INDEX({range}, {row_nums}, {col_num}))",
+    "validation": "exact_match",
+    "complexity_level": "moderate",
+    "description": "Get values at specific array positions",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.select(pl.col('column').list.get(index))",
+    "sheets_function": "ARRAYFORMULA",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "array_match": {
+    "polars": "df['column'].map_elements(lambda x: lookup_dict.get(x, default))",
+    "sheets": "=ARRAYFORMULA(MATCH({lookup_range}, {search_range}, 0))",
+    "validation": "exact_match",
+    "complexity_level": "moderate",
+    "description": "Find positions of values in array",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df['column'].map_elements(lambda x: lookup_dict.get(x, default))",
+    "sheets_function": "ARRAYFORMULA",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "array_multiply": {
+    "polars": "df.select(pl.col('col1') * pl.col('col2'))",
+    "sheets": "=ARRAYFORMULA({range1} * {range2})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Element-wise multiplication of two arrays",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.select(pl.col('col1') * pl.col('col2'))",
+    "sheets_function": "ARRAYFORMULA",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "array_sum": {
+    "polars": "df.select(pl.col('col1') + pl.col('col2'))",
+    "sheets": "=ARRAYFORMULA({range1} + {range2})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Element-wise addition of two arrays",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.select(pl.col('col1') + pl.col('col2'))",
+    "sheets_function": "ARRAYFORMULA",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "array_sum_product": {
+    "polars": "(df['col1'] * df['col2']).sum()",
+    "sheets": "=SUMPRODUCT({range1}, {range2})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Sum of products of corresponding array elements",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "(df['col1'] * df['col2']).sum()",
+    "sheets_function": "SUMPRODUCT",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "arrayformula": {
+    "polars": "Applied automatically to column operations",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Apply formula to entire array/range at once",
+    "implementation_status": "completed",
+    "syntax": "ARRAYFORMULA(formula)",
+    "parameters": {
+      "formula": {
+        "description": "Formula to apply to array",
+        "required": true,
+        "type": "string"
+      }
+    },
+    "examples": {
+      "basic_math": "ARRAYFORMULA(A1:A10 * B1:B10)",
+      "conditional": "ARRAYFORMULA(IF(A1:A10>0, A1:A10, 0))",
+      "text_operation": "ARRAYFORMULA(UPPER(A1:A10))"
+    },
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Applied automatically to column operations",
+    "sheets_function": "ARRAYFORMULA",
+    "array_context": true,
+    "helper_columns": []
+  },
+  "divide_arrays": {
+    "polars": "pl.col('col1') / pl.col('col2')",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Element-wise division of arrays",
+    "implementation_status": "pending",
+    "syntax": "ARRAYFORMULA(array1 / array2)",
+    "parameters": {
+      "array1": {
+        "description": "First array",
+        "required": true,
+        "type": "range"
+      },
+      "array2": {
+        "description": "Second array or scalar",
+        "required": true,
+        "type": "range_or_scalar"
+      }
+    },
+    "examples": {
+      "basic": "ARRAYFORMULA(A1:A10 / B1:B10)",
+      "scalar": "ARRAYFORMULA(A1:A10 / 2)"
+    },
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col('col1') / pl.col('col2')",
+    "sheets_function": "ARRAYFORMULA(/)",
+    "array_context": true,
+    "helper_columns": []
+  },
+  "filter": {
+    "polars": "df.filter(pl.col('column') == criteria)",
+    "sheets": "=FILTER({range}, {criteria_range}={criteria})",
+    "validation": "exact_match",
+    "complexity_level": "moderate",
+    "description": "Filter array based on criteria",
+    "implementation_status": "completed",
+    "syntax": "FILTER(range, condition)",
+    "parameters": {
+      "condition": {
+        "description": "Condition array for filtering",
+        "required": true,
+        "type": "boolean_array"
+      },
+      "range": {
+        "description": "Range to filter",
+        "required": true,
+        "type": "range"
+      }
+    },
+    "examples": {
+      "basic": "FILTER(A1:C10, A1:A10>0)",
+      "multiple_conditions": "FILTER(A1:C10, (A1:A10>0)*(B1:B10<100))"
+    },
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.filter(condition)",
+    "sheets_function": "FILTER",
+    "array_context": true,
+    "helper_columns": []
+  },
+  "flatten": {
+    "polars": "df.select(pl.col('list_column').list.explode())",
+    "sheets": "=FLATTEN({range1}, {range2})",
+    "validation": "exact_match",
+    "complexity_level": "moderate",
+    "description": "Flatten array into single column",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.select(pl.col('list_column').list.explode())",
+    "sheets_function": "FLATTEN",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "lookup_array": {
+    "polars": "df.join(lookup_df, on='key', how='left')",
+    "sheets": "=ARRAYFORMULA(VLOOKUP({lookup_range}, {table_range}, {col_index}, FALSE))",
+    "validation": "exact_match",
+    "complexity_level": "complex",
+    "description": "Array-based lookup operation",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.join(lookup_df, on='key', how='left')",
+    "sheets_function": "ARRAYFORMULA",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "mmult": {
+    "polars": "Matrix multiplication using numpy",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Matrix multiplication",
+    "implementation_status": "pending",
+    "syntax": "MMULT(array1, array2)",
+    "parameters": {
+      "array1": {
+        "description": "First matrix",
+        "required": true,
+        "type": "range"
+      },
+      "array2": {
+        "description": "Second matrix",
+        "required": true,
+        "type": "range"
+      }
+    },
+    "examples": {
+      "basic": "MMULT(A1:B3, D1:E2)"
+    },
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Matrix multiplication using numpy",
+    "sheets_function": "MMULT",
+    "array_context": true,
+    "helper_columns": []
+  },
+  "multiply_arrays": {
+    "polars": "pl.col('col1') * pl.col('col2')",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Element-wise multiplication of arrays",
+    "implementation_status": "pending",
+    "syntax": "ARRAYFORMULA(array1 * array2)",
+    "parameters": {
+      "array1": {
+        "description": "First array",
+        "required": true,
+        "type": "range"
+      },
+      "array2": {
+        "description": "Second array or scalar",
+        "required": true,
+        "type": "range_or_scalar"
+      }
+    },
+    "examples": {
+      "basic": "ARRAYFORMULA(A1:A10 * B1:B10)",
+      "scalar": "ARRAYFORMULA(A1:A10 * 2)"
+    },
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col('col1') * pl.col('col2')",
+    "sheets_function": "ARRAYFORMULA(*)",
+    "array_context": true,
+    "helper_columns": []
+  },
+  "power_arrays": {
+    "polars": "pl.col('col1') ** pl.col('col2')",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Element-wise power of arrays",
+    "implementation_status": "pending",
+    "syntax": "ARRAYFORMULA(array1 ^ array2)",
+    "parameters": {
+      "array1": {
+        "description": "Base array",
+        "required": true,
+        "type": "range"
+      },
+      "array2": {
+        "description": "Exponent array or scalar",
+        "required": true,
+        "type": "range_or_scalar"
+      }
+    },
+    "examples": {
+      "basic": "ARRAYFORMULA(A1:A10 ^ 2)",
+      "variable_power": "ARRAYFORMULA(A1:A10 ^ B1:B10)"
+    },
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col('col1') ** pl.col('col2')",
+    "sheets_function": "ARRAYFORMULA(^)",
+    "array_context": true,
+    "helper_columns": []
+  },
+  "sequence": {
+    "polars": "pl.int_range(start, end, step)",
+    "sheets": "=SEQUENCE({rows}, {columns}, {start}, {step})",
+    "validation": "exact_match",
+    "complexity_level": "moderate",
+    "description": "Generate sequence of numbers",
+    "implementation_status": "pending",
+    "syntax": "SEQUENCE(rows, columns, start, step)",
+    "parameters": {
+      "columns": {
+        "description": "Number of columns (default 1)",
+        "required": false,
+        "type": "integer"
+      },
+      "rows": {
+        "description": "Number of rows",
+        "required": true,
+        "type": "integer"
+      },
+      "start": {
+        "description": "Starting value (default 1)",
+        "required": false,
+        "type": "number"
+      },
+      "step": {
+        "description": "Step increment (default 1)",
+        "required": false,
+        "type": "number"
+      }
+    },
+    "examples": {
+      "basic": "SEQUENCE(10)",
+      "matrix": "SEQUENCE(3, 4, 1, 1)",
+      "with_step": "SEQUENCE(10, 1, 1, 2)"
+    },
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.arange(start, start + rows*step, step)",
+    "sheets_function": "SEQUENCE",
+    "array_context": true,
+    "helper_columns": []
+  },
+  "sort": {
+    "polars": "df.sort('column')",
+    "sheets": "=SORT({range}, {sort_column}, {is_ascending})",
+    "validation": "exact_match",
+    "complexity_level": "moderate",
+    "description": "Sort array by column",
+    "implementation_status": "completed",
+    "syntax": "SORT(range, sort_column, is_ascending)",
+    "parameters": {
+      "is_ascending": {
+        "description": "Sort order (TRUE for ascending)",
+        "required": false,
+        "type": "boolean"
+      },
+      "range": {
+        "description": "Range to sort",
+        "required": true,
+        "type": "range"
+      },
+      "sort_column": {
+        "description": "Column index to sort by",
+        "required": true,
+        "type": "integer"
+      }
+    },
+    "examples": {
+      "basic": "SORT(A1:C10, 1, TRUE)",
+      "multiple_columns": "SORT(A1:C10, {1,2}, {TRUE,FALSE})"
+    },
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.sort(column, descending=not is_ascending)",
+    "sheets_function": "SORT",
+    "array_context": true,
+    "helper_columns": []
+  },
+  "sumproduct": {
+    "polars": "(pl.col('col1') * pl.col('col2')).sum()",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Sum of products of corresponding array elements",
+    "implementation_status": "pending",
+    "syntax": "SUMPRODUCT(array1, array2, ...)",
+    "parameters": {
+      "arrays": {
+        "description": "Arrays to multiply and sum",
+        "required": true,
+        "type": "range"
+      }
+    },
+    "examples": {
+      "basic": "SUMPRODUCT(A1:A10, B1:B10)",
+      "conditional": "SUMPRODUCT((A1:A10>0)*(B1:B10))"
+    },
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "(pl.col('col1') * pl.col('col2')).sum()",
+    "sheets_function": "SUMPRODUCT",
+    "array_context": true,
+    "helper_columns": []
+  },
+  "transpose": {
+    "polars": "df.transpose()",
+    "sheets": "=TRANSPOSE({range})",
+    "validation": "exact_match",
+    "complexity_level": "moderate",
+    "description": "Transpose array (rows to columns)",
+    "implementation_status": "completed",
+    "syntax": "TRANSPOSE(array)",
+    "parameters": {
+      "array": {
+        "description": "Array to transpose",
+        "required": true,
+        "type": "range"
+      }
+    },
+    "examples": {
+      "basic": "TRANSPOSE(A1:C3)"
+    },
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.transpose()",
+    "sheets_function": "TRANSPOSE",
+    "array_context": true,
+    "helper_columns": []
+  },
+  "unique": {
+    "polars": "df['column'].unique()",
+    "sheets": "=UNIQUE({range})",
+    "validation": "exact_match",
+    "complexity_level": "moderate",
+    "description": "Get unique values from array",
+    "implementation_status": "completed",
+    "syntax": "UNIQUE(range)",
+    "parameters": {
+      "by_column": {
+        "description": "Whether to compare by columns",
+        "required": false,
+        "type": "boolean"
+      },
+      "range": {
+        "description": "Range to extract unique values from",
+        "required": true,
+        "type": "range"
+      }
+    },
+    "examples": {
+      "basic": "UNIQUE(A1:A10)",
+      "by_columns": "UNIQUE(A1:C10, FALSE, FALSE)"
+    },
+    "use_cases": [],
+    "category": "array_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col().unique()",
+    "sheets_function": "UNIQUE",
+    "array_context": true,
+    "helper_columns": []
   }
 }

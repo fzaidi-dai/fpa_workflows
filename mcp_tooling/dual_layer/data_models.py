@@ -187,7 +187,7 @@ class ExecutionPlan:
 
 @dataclass
 class FormulaMapping:
-    """Mapping between Polars operations and Google Sheets formulas"""
+    """Enhanced mapping between Polars operations and Google Sheets formulas with rich metadata"""
     operation_name: str
     polars_code: str
     sheets_formula: str
@@ -195,6 +195,19 @@ class FormulaMapping:
     helper_columns: List[str] = field(default_factory=list)
     complexity_level: str = "simple"  # simple, moderate, complex
     description: str = ""
+    implementation_status: str = "pending"  # pending, completed, deprecated
+    
+    # Enhanced metadata fields for comprehensive documentation
+    syntax: str = ""
+    parameters: Dict[str, Any] = field(default_factory=dict)
+    examples: Dict[str, str] = field(default_factory=dict)
+    use_cases: List[str] = field(default_factory=list)
+    category: str = ""
+    notes: str = ""
+    version_added: str = ""
+    polars_implementation: str = ""  # Detailed implementation notes
+    sheets_function: str = ""  # Primary Google Sheets function name
+    array_context: bool = False  # Whether function works in array context
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization"""
@@ -205,8 +218,49 @@ class FormulaMapping:
             "validation_type": self.validation_type,
             "helper_columns": self.helper_columns,
             "complexity_level": self.complexity_level,
-            "description": self.description
+            "description": self.description,
+            "implementation_status": self.implementation_status,
+            "syntax": self.syntax,
+            "parameters": self.parameters,
+            "examples": self.examples,
+            "use_cases": self.use_cases,
+            "category": self.category,
+            "notes": self.notes,
+            "version_added": self.version_added,
+            "polars_implementation": self.polars_implementation,
+            "sheets_function": self.sheets_function,
+            "array_context": self.array_context
         }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'FormulaMapping':
+        """Create FormulaMapping from dictionary with backwards compatibility"""
+        # Required fields
+        operation_name = data.get("operation_name", "")
+        polars_code = data.get("polars", data.get("polars_code", ""))
+        sheets_formula = data.get("sheets", data.get("sheets_formula", ""))
+        
+        # Optional fields with backwards compatibility
+        return cls(
+            operation_name=operation_name,
+            polars_code=polars_code,
+            sheets_formula=sheets_formula,
+            validation_type=data.get("validation", data.get("validation_type", "exact_match")),
+            helper_columns=data.get("helper_columns", []),
+            complexity_level=data.get("complexity_level", "simple"),
+            description=data.get("description", ""),
+            implementation_status=data.get("implementation_status", "pending"),
+            syntax=data.get("syntax", ""),
+            parameters=data.get("parameters", {}),
+            examples=data.get("examples", {}),
+            use_cases=data.get("use_cases", []),
+            category=data.get("category", ""),
+            notes=data.get("notes", ""),
+            version_added=data.get("version_added", ""),
+            polars_implementation=data.get("polars_implementation", data.get("polars_mapping", "")),
+            sheets_function=data.get("sheets_function", ""),
+            array_context=data.get("array_context", False)
+        )
 
 
 @dataclass

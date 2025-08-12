@@ -23,8 +23,8 @@ class ComplexFormulaHandler:
             mappings_dir: Directory containing formula mapping JSON files
         """
         if mappings_dir is None:
-            # Default to mappings directory relative to this file
-            mappings_dir = Path(__file__).parent.parent / "mappings"
+            # Use consolidated mappings directory
+            mappings_dir = Path(__file__).parent.parent.parent / "formula_mappings"
         
         self.mappings_dir = Path(mappings_dir)
         self.formula_mappings = {}
@@ -205,21 +205,20 @@ class ComplexFormulaHandler:
     
     def _search_in_mapping(self, formula: str, mappings: Dict[str, Any], pattern_type: str) -> Optional[Dict[str, Any]]:
         """Search for formula in a specific mapping category"""
-        def search_recursive(data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-            for key, value in data.items():
-                if isinstance(value, dict):
-                    # Check if this entry matches our formula
-                    if 'sheets_formula' in value:
-                        if self._formula_matches_pattern(formula, value.get('sheets_formula', '')):
+        for key, value in mappings.items():
+            if isinstance(value, dict):
+                # Check both 'sheets' and 'sheets_formula' fields for compatibility
+                sheets_formula = value.get('sheets', value.get('sheets_formula', ''))
+                if sheets_formula and self._formula_matches_pattern(formula, sheets_formula):
+                    return value
+                
+                # Also check examples for matches
+                if 'examples' in value and isinstance(value['examples'], dict):
+                    for example_formula in value['examples'].values():
+                        if self._formula_matches_pattern(formula, example_formula):
                             return value
-                    
-                    # Recursively search nested structures
-                    result = search_recursive(value)
-                    if result:
-                        return result
-            return None
         
-        return search_recursive(mappings)
+        return None
     
     def _formula_matches_pattern(self, formula: str, pattern: str) -> bool:
         """Check if a formula matches a pattern template"""

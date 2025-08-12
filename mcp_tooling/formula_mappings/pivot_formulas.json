@@ -1,101 +1,46 @@
 {
-  "pivot_sum": {
-    "polars": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').sum())",
-    "sheets": "=QUERY({range}, \"SELECT {row_field}, {col_field}, SUM({value_field}) GROUP BY {row_field}, {col_field}\")",
-    "validation": "tolerance_0.001",
-    "complexity_level": "complex",
-    "description": "Pivot table with sum aggregation",
-    "implementation_status": "completed"
-  },
-  "pivot_count": {
-    "polars": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').count())",
-    "sheets": "=QUERY({range}, \"SELECT {row_field}, {col_field}, COUNT({value_field}) GROUP BY {row_field}, {col_field}\")",
-    "validation": "exact_match",
-    "complexity_level": "complex",
-    "description": "Pivot table with count aggregation",
-    "implementation_status": "completed"
-  },
-  "pivot_average": {
-    "polars": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').mean())",
-    "sheets": "=QUERY({range}, \"SELECT {row_field}, {col_field}, AVG({value_field}) GROUP BY {row_field}, {col_field}\")",
-    "validation": "tolerance_0.01",
-    "complexity_level": "complex",
-    "description": "Pivot table with average aggregation",
-    "implementation_status": "completed"
-  },
-  "pivot_max": {
-    "polars": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').max())",
-    "sheets": "=QUERY({range}, \"SELECT {row_field}, {col_field}, MAX({value_field}) GROUP BY {row_field}, {col_field}\")",
-    "validation": "exact_match",
-    "complexity_level": "complex",
-    "description": "Pivot table with max aggregation",
-    "implementation_status": "completed"
-  },
-  "pivot_min": {
-    "polars": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').min())",
-    "sheets": "=QUERY({range}, \"SELECT {row_field}, {col_field}, MIN({value_field}) GROUP BY {row_field}, {col_field}\")",
-    "validation": "exact_match",
-    "complexity_level": "complex",
-    "description": "Pivot table with min aggregation",
-    "implementation_status": "completed"
-  },
-  "group_by_sum": {
-    "polars": "df.group_by('group_field').agg(pl.col('value_field').sum())",
-    "sheets": "=QUERY({range}, \"SELECT {group_field}, SUM({value_field}) GROUP BY {group_field}\")",
+  "calculated_pivot_fields": {
+    "polars": "Add calculated columns before or after pivot operation",
+    "sheets": "",
     "validation": "tolerance_0.001",
     "complexity_level": "moderate",
-    "description": "Group by with sum aggregation",
-    "implementation_status": "completed"
-  },
-  "group_by_count": {
-    "polars": "df.group_by('group_field').agg(pl.col('value_field').count())",
-    "sheets": "=QUERY({range}, \"SELECT {group_field}, COUNT({value_field}) GROUP BY {group_field}\")",
-    "validation": "exact_match",
-    "complexity_level": "moderate",
-    "description": "Group by with count aggregation",
-    "implementation_status": "completed"
+    "description": "Calculated fields within pivot table context",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {
+      "growth_rate": "Period-over-period growth calculations",
+      "profit_margin": "Calculate profit margin = (Revenue - Cost) / Revenue"
+    },
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Add calculated columns before or after pivot operation",
+    "sheets_function": "",
+    "array_context": false,
+    "helper_columns": []
   },
   "crosstab": {
     "polars": "df.pivot(values='value_field', index='row_field', columns='col_field', aggregate_function='sum')",
     "sheets": "=QUERY({range}, \"SELECT {row_field}, PIVOT SUM({value_field}) FOR {col_field} IN ({col_values})\")",
     "validation": "tolerance_0.001",
     "complexity_level": "complex",
-    "helper_columns": ["pivot_helper"],
     "description": "Cross-tabulation pivot",
-    "implementation_status": "completed"
-  },
-  "subtotal": {
-    "polars": "df.group_by('group_field', maintain_order=True).agg(pl.col('value_field').sum())",
-    "sheets": "=SUBTOTAL(9, {range})",
-    "validation": "tolerance_0.001",
-    "complexity_level": "moderate",
-    "description": "Subtotal with sum function",
-    "implementation_status": "completed"
-  },
-  "running_total": {
-    "polars": "df.with_columns(pl.col('value_field').cumsum().alias('running_total'))",
-    "sheets": "=SUM({range_start}:{current_row})",
-    "validation": "tolerance_0.001",
-    "complexity_level": "moderate",
-    "description": "Running total calculation",
-    "implementation_status": "completed"
-  },
-  "percent_of_total": {
-    "polars": "df.with_columns((pl.col('value_field') / pl.col('value_field').sum() * 100).alias('percent'))",
-    "sheets": "={current_cell}/SUM({total_range})*100",
-    "validation": "tolerance_0.01",
-    "complexity_level": "moderate",
-    "description": "Percentage of total",
-    "implementation_status": "completed"
-  },
-  "rank_partition": {
-    "polars": "df.with_columns(pl.col('value_field').rank(method='ordinal').over('partition_field').alias('rank'))",
-    "sheets": "=RANK({current_cell}, IF({partition_range}={current_partition}, {value_range}), 0)",
-    "validation": "exact_match",
-    "complexity_level": "complex",
-    "helper_columns": ["partition_filter"],
-    "description": "Rank within partition",
-    "implementation_status": "completed"
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.pivot(values='value_field', index='row_field', columns='col_field', aggregate_function='sum')",
+    "sheets_function": "QUERY",
+    "array_context": false,
+    "helper_columns": [
+      "pivot_helper"
+    ]
   },
   "dense_rank": {
     "polars": "df.with_columns(pl.col('value_field').rank(method='dense').alias('dense_rank'))",
@@ -103,7 +48,212 @@
     "validation": "exact_match",
     "complexity_level": "moderate",
     "description": "Dense ranking of values",
-    "implementation_status": "completed"
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.with_columns(pl.col('value_field').rank(method='dense').alias('dense_rank'))",
+    "sheets_function": "RANK",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "dynamic_pivot": {
+    "polars": "Rebuild pivot when data changes using lazy evaluation",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Pivot tables that adjust automatically when source data changes",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Rebuild pivot when data changes using lazy evaluation",
+    "sheets_function": "",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "group_by_average": {
+    "polars": "df.group_by('criteria_col').agg(pl.col('avg_col').mean())",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Average values based on criteria",
+    "implementation_status": "pending",
+    "syntax": "AVERAGEIFS(average_range, criteria_range1, criteria1, ...)",
+    "parameters": {
+      "average_range": {
+        "description": "Range containing values to average",
+        "required": true,
+        "type": "range"
+      },
+      "criteria": {
+        "description": "Criteria to match",
+        "required": true,
+        "type": "string"
+      },
+      "criteria_range": {
+        "description": "Range containing criteria values",
+        "required": true,
+        "type": "range"
+      }
+    },
+    "examples": {
+      "multiple_criteria": "AVERAGEIFS(C:C, A:A, \"Product1\", B:B, \">100\")",
+      "single_criteria": "AVERAGEIF(A:A, \"Product1\", B:B)"
+    },
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.group_by('criteria_col').agg(pl.col('avg_col').mean())",
+    "sheets_function": "AVERAGEIF/AVERAGEIFS",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "group_by_count": {
+    "polars": "df.group_by('group_field').agg(pl.col('value_field').count())",
+    "sheets": "=QUERY({range}, \"SELECT {group_field}, COUNT({value_field}) GROUP BY {group_field}\")",
+    "validation": "exact_match",
+    "complexity_level": "moderate",
+    "description": "Group by with count aggregation",
+    "implementation_status": "completed",
+    "syntax": "COUNTIFS(criteria_range1, criteria1, ...)",
+    "parameters": {
+      "criteria": {
+        "description": "Criteria to match",
+        "required": true,
+        "type": "string"
+      },
+      "criteria_range": {
+        "description": "Range containing criteria values",
+        "required": true,
+        "type": "range"
+      }
+    },
+    "examples": {
+      "multiple_criteria": "COUNTIFS(A:A, \"Product1\", B:B, \">100\")",
+      "single_criteria": "COUNTIF(A:A, \"Product1\")"
+    },
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.group_by('criteria_col').agg(pl.count())",
+    "sheets_function": "COUNTIF/COUNTIFS",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "group_by_sum": {
+    "polars": "df.group_by('group_field').agg(pl.col('value_field').sum())",
+    "sheets": "=QUERY({range}, \"SELECT {group_field}, SUM({value_field}) GROUP BY {group_field}\")",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Group by with sum aggregation",
+    "implementation_status": "completed",
+    "syntax": "SUMIFS(sum_range, criteria_range1, criteria1, ...)",
+    "parameters": {
+      "criteria": {
+        "description": "Criteria to match",
+        "required": true,
+        "type": "string"
+      },
+      "criteria_range": {
+        "description": "Range containing criteria values",
+        "required": true,
+        "type": "range"
+      },
+      "sum_range": {
+        "description": "Range containing values to sum",
+        "required": true,
+        "type": "range"
+      }
+    },
+    "examples": {
+      "multiple_criteria": "SUMIFS(C:C, A:A, \"Product1\", B:B, \">100\")",
+      "single_criteria": "SUMIF(A:A, \"Product1\", B:B)"
+    },
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.group_by('criteria_col').agg(pl.col('sum_col').sum())",
+    "sheets_function": "SUMIF/SUMIFS",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "moving_sum": {
+    "polars": "df.with_columns(pl.col('value_field').rolling_sum(window_size).alias('moving_sum'))",
+    "sheets": "=SUM(OFFSET({current_cell}, -{window_size}+1, 0, {window_size}, 1))",
+    "validation": "tolerance_0.001",
+    "complexity_level": "complex",
+    "description": "Moving sum over window",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.with_columns(pl.col('value_field').rolling_sum(window_size).alias('moving_sum'))",
+    "sheets_function": "SUM",
+    "array_context": false,
+    "helper_columns": [
+      "window_range"
+    ]
+  },
+  "multiple_aggregations": {
+    "polars": "df.group_by(grouping_cols).agg([pl.col('val').sum(), pl.col('val').mean(), pl.col('val').count()])",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Multiple aggregation functions in single pivot",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {
+      "count_and_percent": "Count with percentage calculations",
+      "sum_and_average": "Show both sum and average in same pivot"
+    },
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.group_by(grouping_cols).agg([pl.col('val').sum(), pl.col('val').mean(), pl.col('val').count()])",
+    "sheets_function": "",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "percent_of_total": {
+    "polars": "df.with_columns((pl.col('value_field') / pl.col('value_field').sum() * 100).alias('percent'))",
+    "sheets": "={current_cell}/SUM({total_range})*100",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Percentage of total",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {
+      "column_percent": "Each value as percent of column total",
+      "grand_percent": "Each value as percent of grand total",
+      "row_percent": "Each value as percent of row total"
+    },
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col('value') / pl.col('value').sum() * 100",
+    "sheets_function": "Calculated Field in Pivot",
+    "array_context": false,
+    "helper_columns": []
   },
   "percentile_rank": {
     "polars": "df.with_columns(pl.col('value_field').rank(method='average') / pl.col('value_field').count()).alias('percentile_rank')",
@@ -111,15 +261,351 @@
     "validation": "tolerance_0.01",
     "complexity_level": "moderate",
     "description": "Percentile rank of values",
-    "implementation_status": "completed"
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.with_columns(pl.col('value_field').rank(method='average') / pl.col('value_field').count()).alias('percentile_rank')",
+    "sheets_function": "PERCENTRANK",
+    "array_context": false,
+    "helper_columns": []
   },
-  "moving_sum": {
-    "polars": "df.with_columns(pl.col('value_field').rolling_sum(window_size).alias('moving_sum'))",
-    "sheets": "=SUM(OFFSET({current_cell}, -{window_size}+1, 0, {window_size}, 1))",
+  "pivot_average": {
+    "polars": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').mean())",
+    "sheets": "=QUERY({range}, \"SELECT {row_field}, {col_field}, AVG({value_field}) GROUP BY {row_field}, {col_field}\")",
+    "validation": "tolerance_0.01",
+    "complexity_level": "complex",
+    "description": "Pivot table with average aggregation",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').mean())",
+    "sheets_function": "QUERY",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "pivot_basic": {
+    "polars": "df.group_by(rows + columns).agg(aggregation)",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Create pivot table from data range",
+    "implementation_status": "pending",
+    "syntax": "PIVOT(data_range, rows, columns, values, aggregation)",
+    "parameters": {
+      "aggregation": {
+        "description": "Aggregation function (SUM, COUNT, AVERAGE, etc.)",
+        "required": false,
+        "type": "string"
+      },
+      "columns": {
+        "description": "Column names/indices for column grouping",
+        "required": false,
+        "type": "array"
+      },
+      "data_range": {
+        "description": "Source data range including headers",
+        "required": true,
+        "type": "range"
+      },
+      "rows": {
+        "description": "Column names/indices for row grouping",
+        "required": true,
+        "type": "array"
+      },
+      "values": {
+        "description": "Column names/indices for value aggregation",
+        "required": true,
+        "type": "array"
+      }
+    },
+    "examples": {
+      "basic": "Pivot table with Product as rows, Month as columns, summing Sales",
+      "multiple_values": "Pivot with multiple value fields and different aggregations"
+    },
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.group_by(rows + columns).agg(aggregation)",
+    "sheets_function": "PIVOT",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "pivot_count": {
+    "polars": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').count())",
+    "sheets": "=QUERY({range}, \"SELECT {row_field}, {col_field}, COUNT({value_field}) GROUP BY {row_field}, {col_field}\")",
+    "validation": "exact_match",
+    "complexity_level": "complex",
+    "description": "Pivot table with count aggregation",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').count())",
+    "sheets_function": "QUERY",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "pivot_cross_tab": {
+    "polars": "df.pivot(values='value_col', index='row_col', columns='col_col', aggregate_function='sum')",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Cross-tabulation using pivot table structure",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {
+      "count_by_category": {
+        "description": "Count occurrences by two dimensions",
+        "polars_code": "df.pivot(values='ID', index='Category', columns='Type', aggregate_function='count')",
+        "sheets_equivalent": "Pivot table with Category in Rows, Type in Columns, Count in Values"
+      },
+      "sales_by_product_month": {
+        "description": "Products as rows, months as columns, sum of sales",
+        "polars_code": "df.pivot(values='Sales', index='Product', columns='Month', aggregate_function='sum')",
+        "sheets_equivalent": "Pivot table with Product field in Rows, Month in Columns, Sales in Values"
+      }
+    },
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.pivot(values='value_col', index='row_col', columns='col_col', aggregate_function='sum')",
+    "sheets_function": "",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "pivot_max": {
+    "polars": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').max())",
+    "sheets": "=QUERY({range}, \"SELECT {row_field}, {col_field}, MAX({value_field}) GROUP BY {row_field}, {col_field}\")",
+    "validation": "exact_match",
+    "complexity_level": "complex",
+    "description": "Pivot table with max aggregation",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').max())",
+    "sheets_function": "QUERY",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "pivot_min": {
+    "polars": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').min())",
+    "sheets": "=QUERY({range}, \"SELECT {row_field}, {col_field}, MIN({value_field}) GROUP BY {row_field}, {col_field}\")",
+    "validation": "exact_match",
+    "complexity_level": "complex",
+    "description": "Pivot table with min aggregation",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').min())",
+    "sheets_function": "QUERY",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "pivot_sum": {
+    "polars": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').sum())",
+    "sheets": "=QUERY({range}, \"SELECT {row_field}, {col_field}, SUM({value_field}) GROUP BY {row_field}, {col_field}\")",
     "validation": "tolerance_0.001",
     "complexity_level": "complex",
-    "helper_columns": ["window_range"],
-    "description": "Moving sum over window",
-    "implementation_status": "completed"
+    "description": "Pivot table with sum aggregation",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').sum())",
+    "sheets_function": "QUERY",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "query_with_pivot": {
+    "polars": "df.group_by().agg().pivot()",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "SQL-like queries with pivot operations",
+    "implementation_status": "pending",
+    "syntax": "QUERY(data, \"SELECT ... GROUP BY ... PIVOT ...\")",
+    "parameters": {
+      "data": {
+        "description": "Data range to query",
+        "required": true,
+        "type": "range"
+      },
+      "query_string": {
+        "description": "SQL-like query string",
+        "required": true,
+        "type": "string"
+      }
+    },
+    "examples": {
+      "basic_pivot": "QUERY(A1:D100, \"SELECT A, SUM(D) GROUP BY A PIVOT B\")",
+      "with_conditions": "QUERY(A1:D100, \"SELECT A, SUM(D) WHERE C > 0 GROUP BY A PIVOT B\")"
+    },
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.group_by().agg().pivot()",
+    "sheets_function": "QUERY",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "rank_in_pivot": {
+    "polars": "pl.col('value').rank(method='dense')",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Rank values within pivot context",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {
+      "percentile_rank": "Percentile ranking within categories",
+      "rank_by_sales": "Rank products by sales within each region"
+    },
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col('value').rank(method='dense')",
+    "sheets_function": "RANK function in calculated field",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "rank_partition": {
+    "polars": "df.with_columns(pl.col('value_field').rank(method='ordinal').over('partition_field').alias('rank'))",
+    "sheets": "=RANK({current_cell}, IF({partition_range}={current_partition}, {value_range}), 0)",
+    "validation": "exact_match",
+    "complexity_level": "complex",
+    "description": "Rank within partition",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.with_columns(pl.col('value_field').rank(method='ordinal').over('partition_field').alias('rank'))",
+    "sheets_function": "RANK",
+    "array_context": false,
+    "helper_columns": [
+      "partition_filter"
+    ]
+  },
+  "report_filter": {
+    "polars": "df.filter(condition).pivot(...)",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Page/Report filters in pivot tables",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {
+      "category_filter": "Show only specific categories in pivot",
+      "date_filter": "Filter to specific date range before pivoting"
+    },
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.filter(condition).pivot(...)",
+    "sheets_function": "",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "running_total": {
+    "polars": "df.with_columns(pl.col('value_field').cumsum().alias('running_total'))",
+    "sheets": "=SUM({range_start}:{current_row})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Running total calculation",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {
+      "running_average": "Running average over time",
+      "running_sum": "Cumulative sum by date/period"
+    },
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col('value').cumsum()",
+    "sheets_function": "Calculated Field with Running Sum",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "subtotal": {
+    "polars": "df.group_by('group_field', maintain_order=True).agg(pl.col('value_field').sum())",
+    "sheets": "=SUBTOTAL(9, {range})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Subtotal with sum function",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.group_by('group_field', maintain_order=True).agg(pl.col('value_field').sum())",
+    "sheets_function": "SUBTOTAL",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "value_filters": {
+    "polars": "Post-pivot filtering on aggregated results",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Filter pivot results based on aggregated values",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {
+      "above_threshold": "Show only values above certain threshold",
+      "top_n": "Show only top N items by value"
+    },
+    "use_cases": [],
+    "category": "pivot_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Post-pivot filtering on aggregated results",
+    "sheets_function": "",
+    "array_context": false,
+    "helper_columns": []
   }
 }

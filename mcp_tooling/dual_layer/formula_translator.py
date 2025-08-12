@@ -49,20 +49,20 @@ class FormulaTranslator:
                     print(f"Warning: Could not load {file_name}: {e}")
     
     def _process_mapping_data(self, data: Dict[str, Any], source_file: str):
-        """Process and store mapping data"""
+        """Process and store mapping data with enhanced metadata support"""
         category = source_file.replace('.json', '').replace('_', ' ').title()
         
         for operation_name, mapping_data in data.items():
             if isinstance(mapping_data, dict):
-                mapping = FormulaMapping(
-                    operation_name=operation_name,
-                    polars_code=mapping_data.get("polars", ""),
-                    sheets_formula=mapping_data.get("sheets", ""),
-                    validation_type=mapping_data.get("validation", "exact_match"),
-                    helper_columns=mapping_data.get("helper_columns", []),
-                    complexity_level=mapping_data.get("complexity_level", "simple"),
-                    description=mapping_data.get("description", f"{category} operation")
-                )
+                # Use the new from_dict method for backwards compatibility
+                mapping_data_copy = mapping_data.copy()
+                mapping_data_copy["operation_name"] = operation_name
+                
+                # Set category if not present
+                if "category" not in mapping_data_copy:
+                    mapping_data_copy["category"] = category.lower().replace(' ', '_')
+                
+                mapping = FormulaMapping.from_dict(mapping_data_copy)
                 self.mappings[operation_name] = mapping
     
     def translate_operation(self, 
@@ -294,3 +294,45 @@ class ComplexFormulaHandler:
         percentile = polars_op.get("percentile", 0.5)
         
         return f"=PERCENTILE({data_range}, {percentile})"
+    
+    # Enhanced metadata access methods
+    def get_function_metadata(self, operation_name: str) -> Optional[Dict[str, Any]]:
+        """Get enhanced metadata for a function"""
+        if operation_name in self.mappings:
+            return self.mappings[operation_name].to_dict()
+        return None
+    
+    def get_function_examples(self, operation_name: str) -> Dict[str, str]:
+        """Get examples for a function"""
+        if operation_name in self.mappings:
+            return self.mappings[operation_name].examples
+        return {}
+    
+    def get_function_parameters(self, operation_name: str) -> Dict[str, Any]:
+        """Get parameter definitions for a function"""
+        if operation_name in self.mappings:
+            return self.mappings[operation_name].parameters
+        return {}
+    
+    def get_functions_by_category(self, category: str) -> List[str]:
+        """Get all function names in a category"""
+        return [name for name, mapping in self.mappings.items() 
+                if mapping.category == category]
+    
+    def get_completed_functions(self) -> List[str]:
+        """Get all functions with completed implementation"""
+        return [name for name, mapping in self.mappings.items() 
+                if mapping.implementation_status == "completed"]
+    
+    def search_functions(self, query: str) -> List[str]:
+        """Search functions by name or description"""
+        query_lower = query.lower()
+        results = []
+        
+        for name, mapping in self.mappings.items():
+            if (query_lower in name.lower() or 
+                query_lower in mapping.description.lower() or
+                any(query_lower in use_case.lower() for use_case in mapping.use_cases)):
+                results.append(name)
+        
+        return results

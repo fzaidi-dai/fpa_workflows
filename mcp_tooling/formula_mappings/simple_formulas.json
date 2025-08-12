@@ -1,59 +1,524 @@
 {
-  "sum": {
-    "polars": "df['column'].sum()",
-    "sheets": "=SUM({range})",
+  "abs": {
+    "polars": "df['column'].abs()",
+    "sheets": "=ABS({range})",
     "validation": "exact_match",
     "complexity_level": "simple",
-    "description": "Sum all values in a range"
+    "description": "Calculate absolute value",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df['column'].abs()",
+    "sheets_function": "ABS",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "and": {
+    "polars": "condition1 & condition2",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Logical AND of multiple conditions",
+    "implementation_status": "completed",
+    "syntax": "AND(condition1, condition2, ...)",
+    "parameters": {
+      "conditions": {
+        "description": "Logical conditions to evaluate",
+        "required": true,
+        "type": "boolean"
+      }
+    },
+    "examples": {
+      "basic": "AND(A1>0, B1>0)"
+    },
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "condition1 & condition2",
+    "sheets_function": "AND",
+    "array_context": false,
+    "helper_columns": []
   },
   "average": {
     "polars": "df['column'].mean()",
     "sheets": "=AVERAGE({range})",
     "validation": "tolerance_0.001",
     "complexity_level": "simple",
-    "description": "Calculate average of values in a range"
+    "description": "Calculate average of values in a range",
+    "implementation_status": "completed",
+    "syntax": "AVERAGE(range)",
+    "parameters": {
+      "range": {
+        "description": "Cell range in A1 notation",
+        "required": true,
+        "type": "string"
+      }
+    },
+    "examples": {
+      "basic": "AVERAGE(A1:A10)",
+      "multiple_ranges": "AVERAGE(A1:A10, C1:C10)",
+      "with_conditions": "AVERAGEIF(A1:A10, \">0\", B1:B10)"
+    },
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col().mean()",
+    "sheets_function": "AVERAGE",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "concatenate": {
+    "polars": "df['col1'].str.concat(df['col2'])",
+    "sheets": "=CONCATENATE({range1}, {range2})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Concatenate text values",
+    "implementation_status": "completed",
+    "syntax": "CONCATENATE(text1, text2, ...)",
+    "parameters": {
+      "text": {
+        "description": "Text values to concatenate",
+        "required": true,
+        "type": "string"
+      }
+    },
+    "examples": {
+      "basic": "CONCATENATE(A1, B1)",
+      "textjoin": "TEXTJOIN(\", \", TRUE, A1:A5)",
+      "with_separator": "CONCATENATE(A1, \" \", B1)"
+    },
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.concat_str([pl.col(col) for col in columns])",
+    "sheets_function": "CONCATENATE",
+    "array_context": false,
+    "helper_columns": []
   },
   "count": {
     "polars": "df['column'].count()",
     "sheets": "=COUNT({range})",
     "validation": "exact_match",
     "complexity_level": "simple",
-    "description": "Count numeric values in a range"
+    "description": "Count numeric values in a range",
+    "implementation_status": "completed",
+    "syntax": "COUNT(range)",
+    "parameters": {
+      "range": {
+        "description": "Cell range in A1 notation",
+        "required": true,
+        "type": "string"
+      }
+    },
+    "examples": {
+      "basic": "COUNT(A1:A10)",
+      "counta": "COUNTA(A1:A10)",
+      "countif": "COUNTIF(A1:A10, \">0\")"
+    },
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col().count()",
+    "sheets_function": "COUNT",
+    "array_context": false,
+    "helper_columns": []
   },
   "counta": {
     "polars": "df.select(pl.col('column').count()).item()",
     "sheets": "=COUNTA({range})",
     "validation": "exact_match",
     "complexity_level": "simple",
-    "description": "Count non-empty cells in a range"
+    "description": "Count non-empty cells in a range",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df.select(pl.col('column').count()).item()",
+    "sheets_function": "COUNTA",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "if": {
+    "polars": "pl.when(condition).then(value_if_true).otherwise(value_if_false)",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Return different values based on condition",
+    "implementation_status": "completed",
+    "syntax": "IF(condition, value_if_true, value_if_false)",
+    "parameters": {
+      "condition": {
+        "description": "Logical test",
+        "required": true,
+        "type": "boolean"
+      },
+      "value_if_false": {
+        "description": "Value when condition is false",
+        "required": true,
+        "type": "any"
+      },
+      "value_if_true": {
+        "description": "Value when condition is true",
+        "required": true,
+        "type": "any"
+      }
+    },
+    "examples": {
+      "basic": "IF(A1>0, \"Positive\", \"Not Positive\")",
+      "nested": "IF(A1>0, \"Positive\", IF(A1<0, \"Negative\", \"Zero\"))"
+    },
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.when(condition).then(value_if_true).otherwise(value_if_false)",
+    "sheets_function": "IF",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "left": {
+    "polars": "df['column'].str.slice(0, num_chars)",
+    "sheets": "=LEFT({range}, {num_chars})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Extract characters from left",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df['column'].str.slice(0, num_chars)",
+    "sheets_function": "LEFT",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "len": {
+    "polars": "df['column'].str.len_chars()",
+    "sheets": "=LEN({range})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Get length of text",
+    "implementation_status": "completed",
+    "syntax": "LEN(text)",
+    "parameters": {
+      "text": {
+        "description": "Text string to measure",
+        "required": true,
+        "type": "string"
+      }
+    },
+    "examples": {
+      "basic": "LEN(A1)"
+    },
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col().str.len_chars()",
+    "sheets_function": "LEN",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "lower": {
+    "polars": "df['column'].str.to_lowercase()",
+    "sheets": "=LOWER({range})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Convert text to lowercase",
+    "implementation_status": "completed",
+    "syntax": "LOWER(text)",
+    "parameters": {
+      "text": {
+        "description": "Text to convert",
+        "required": true,
+        "type": "string"
+      }
+    },
+    "examples": {
+      "basic": "LOWER(A1)"
+    },
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col().str.to_lowercase()",
+    "sheets_function": "LOWER",
+    "array_context": false,
+    "helper_columns": []
   },
   "max": {
     "polars": "df['column'].max()",
     "sheets": "=MAX({range})",
     "validation": "exact_match",
     "complexity_level": "simple",
-    "description": "Find maximum value in a range"
-  },
-  "min": {
-    "polars": "df['column'].min()",
-    "sheets": "=MIN({range})",
-    "validation": "exact_match",
-    "complexity_level": "simple",
-    "description": "Find minimum value in a range"
+    "description": "Find maximum value in a range",
+    "implementation_status": "completed",
+    "syntax": "MAX(range)",
+    "parameters": {
+      "range": {
+        "description": "Cell range in A1 notation",
+        "required": true,
+        "type": "string"
+      }
+    },
+    "examples": {
+      "basic": "MAX(A1:A10)",
+      "multiple_ranges": "MAX(A1:A10, C1:C10)"
+    },
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col().max()",
+    "sheets_function": "MAX",
+    "array_context": false,
+    "helper_columns": []
   },
   "median": {
     "polars": "df['column'].median()",
     "sheets": "=MEDIAN({range})",
     "validation": "tolerance_0.001",
     "complexity_level": "simple",
-    "description": "Calculate median value in a range"
+    "description": "Calculate median value in a range",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df['column'].median()",
+    "sheets_function": "MEDIAN",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "mid": {
+    "polars": "df['column'].str.slice(start, length)",
+    "sheets": "=MID({range}, {start}, {length})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Extract characters from middle",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df['column'].str.slice(start, length)",
+    "sheets_function": "MID",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "min": {
+    "polars": "df['column'].min()",
+    "sheets": "=MIN({range})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Find minimum value in a range",
+    "implementation_status": "completed",
+    "syntax": "MIN(range)",
+    "parameters": {
+      "range": {
+        "description": "Cell range in A1 notation",
+        "required": true,
+        "type": "string"
+      }
+    },
+    "examples": {
+      "basic": "MIN(A1:A10)",
+      "multiple_ranges": "MIN(A1:A10, C1:C10)"
+    },
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col().min()",
+    "sheets_function": "MIN",
+    "array_context": false,
+    "helper_columns": []
   },
   "mode": {
     "polars": "df['column'].mode().first()",
     "sheets": "=MODE({range})",
     "validation": "exact_match",
     "complexity_level": "simple",
-    "description": "Find most frequently occurring value"
+    "description": "Find most frequently occurring value",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df['column'].mode().first()",
+    "sheets_function": "MODE",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "not": {
+    "polars": "~condition",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Logical NOT of a condition",
+    "implementation_status": "completed",
+    "syntax": "NOT(condition)",
+    "parameters": {
+      "condition": {
+        "description": "Logical condition to negate",
+        "required": true,
+        "type": "boolean"
+      }
+    },
+    "examples": {
+      "basic": "NOT(A1>0)"
+    },
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "~condition",
+    "sheets_function": "NOT",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "or": {
+    "polars": "condition1 | condition2",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Logical OR of multiple conditions",
+    "implementation_status": "completed",
+    "syntax": "OR(condition1, condition2, ...)",
+    "parameters": {
+      "conditions": {
+        "description": "Logical conditions to evaluate",
+        "required": true,
+        "type": "boolean"
+      }
+    },
+    "examples": {
+      "basic": "OR(A1>0, B1>0)"
+    },
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "condition1 | condition2",
+    "sheets_function": "OR",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "power": {
+    "polars": "df['column'] ** power",
+    "sheets": "=POWER({range}, {power})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "simple",
+    "description": "Raise to a power",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df['column'] ** power",
+    "sheets_function": "POWER",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "right": {
+    "polars": "df['column'].str.slice(-num_chars)",
+    "sheets": "=RIGHT({range}, {num_chars})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Extract characters from right",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df['column'].str.slice(-num_chars)",
+    "sheets_function": "RIGHT",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "round": {
+    "polars": "df['column'].round(decimals)",
+    "sheets": "=ROUND({range}, {decimals})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Round numbers to specified decimal places",
+    "implementation_status": "completed",
+    "syntax": "ROUND(value, digits)",
+    "parameters": {
+      "digits": {
+        "description": "Number of decimal places",
+        "required": true,
+        "type": "integer"
+      },
+      "value": {
+        "description": "Number to round",
+        "required": true,
+        "type": "number"
+      }
+    },
+    "examples": {
+      "basic": "ROUND(A1, 2)",
+      "rounddown": "ROUNDDOWN(A1, 2)",
+      "roundup": "ROUNDUP(A1, 2)"
+    },
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col().round(digits)",
+    "sheets_function": "ROUND",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "sqrt": {
+    "polars": "df['column'].sqrt()",
+    "sheets": "=SQRT({range})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "simple",
+    "description": "Calculate square root",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df['column'].sqrt()",
+    "sheets_function": "SQRT",
+    "array_context": false,
+    "helper_columns": []
   },
   "stdev": {
     "polars": "df['column'].std(ddof=1)",
@@ -61,7 +526,106 @@
     "validation": "tolerance_0.01",
     "complexity_level": "simple",
     "description": "Calculate standard deviation (sample)",
-    "implementation_status": "completed"
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df['column'].std(ddof=1)",
+    "sheets_function": "STDEV",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "sum": {
+    "polars": "df['column'].sum()",
+    "sheets": "=SUM({range})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Sum all values in a range",
+    "implementation_status": "completed",
+    "syntax": "SUM(range)",
+    "parameters": {
+      "criteria": {
+        "description": "Condition for SUMIF/SUMIFS",
+        "required": false,
+        "type": "string"
+      },
+      "range": {
+        "description": "Cell range in A1 notation",
+        "required": true,
+        "type": "string"
+      }
+    },
+    "examples": {
+      "basic": "SUM(A1:A10)",
+      "multiple_ranges": "SUM(A1:A10, C1:C10)",
+      "with_conditions": "SUMIF(A1:A10, \">0\", B1:B10)"
+    },
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col().sum()",
+    "sheets_function": "SUM",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "trim": {
+    "polars": "df['column'].str.strip_chars()",
+    "sheets": "=TRIM({range})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Remove extra spaces",
+    "implementation_status": "completed",
+    "syntax": "TRIM(text)",
+    "parameters": {
+      "text": {
+        "description": "Text to trim",
+        "required": true,
+        "type": "string"
+      }
+    },
+    "examples": {
+      "basic": "TRIM(A1)"
+    },
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col().str.strip_chars()",
+    "sheets_function": "TRIM",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "upper": {
+    "polars": "df['column'].str.to_uppercase()",
+    "sheets": "=UPPER({range})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Convert text to uppercase",
+    "implementation_status": "completed",
+    "syntax": "UPPER(text)",
+    "parameters": {
+      "text": {
+        "description": "Text to convert",
+        "required": true,
+        "type": "string"
+      }
+    },
+    "examples": {
+      "basic": "UPPER(A1)"
+    },
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "pl.col().str.to_uppercase()",
+    "sheets_function": "UPPER",
+    "array_context": false,
+    "helper_columns": []
   },
   "var": {
     "polars": "df['column'].var(ddof=1)",
@@ -69,90 +633,17 @@
     "validation": "tolerance_0.01",
     "complexity_level": "simple",
     "description": "Calculate variance (sample)",
-    "implementation_status": "completed"
-  },
-  "round": {
-    "polars": "df['column'].round(decimals)",
-    "sheets": "=ROUND({range}, {decimals})",
-    "validation": "exact_match",
-    "complexity_level": "simple",
-    "description": "Round numbers to specified decimal places"
-  },
-  "abs": {
-    "polars": "df['column'].abs()",
-    "sheets": "=ABS({range})",
-    "validation": "exact_match",
-    "complexity_level": "simple",
-    "description": "Calculate absolute value"
-  },
-  "sqrt": {
-    "polars": "df['column'].sqrt()",
-    "sheets": "=SQRT({range})",
-    "validation": "tolerance_0.001",
-    "complexity_level": "simple",
-    "description": "Calculate square root"
-  },
-  "power": {
-    "polars": "df['column'] ** power",
-    "sheets": "=POWER({range}, {power})",
-    "validation": "tolerance_0.001",
-    "complexity_level": "simple",
-    "description": "Raise to a power"
-  },
-  "concatenate": {
-    "polars": "df['col1'].str.concat(df['col2'])",
-    "sheets": "=CONCATENATE({range1}, {range2})",
-    "validation": "exact_match",
-    "complexity_level": "simple",
-    "description": "Concatenate text values"
-  },
-  "upper": {
-    "polars": "df['column'].str.to_uppercase()",
-    "sheets": "=UPPER({range})",
-    "validation": "exact_match",
-    "complexity_level": "simple",
-    "description": "Convert text to uppercase"
-  },
-  "lower": {
-    "polars": "df['column'].str.to_lowercase()",
-    "sheets": "=LOWER({range})",
-    "validation": "exact_match",
-    "complexity_level": "simple",
-    "description": "Convert text to lowercase"
-  },
-  "len": {
-    "polars": "df['column'].str.len_chars()",
-    "sheets": "=LEN({range})",
-    "validation": "exact_match",
-    "complexity_level": "simple",
-    "description": "Get length of text"
-  },
-  "trim": {
-    "polars": "df['column'].str.strip_chars()",
-    "sheets": "=TRIM({range})",
-    "validation": "exact_match",
-    "complexity_level": "simple",
-    "description": "Remove extra spaces"
-  },
-  "left": {
-    "polars": "df['column'].str.slice(0, num_chars)",
-    "sheets": "=LEFT({range}, {num_chars})",
-    "validation": "exact_match",
-    "complexity_level": "simple",
-    "description": "Extract characters from left"
-  },
-  "right": {
-    "polars": "df['column'].str.slice(-num_chars)",
-    "sheets": "=RIGHT({range}, {num_chars})",
-    "validation": "exact_match",
-    "complexity_level": "simple",
-    "description": "Extract characters from right"
-  },
-  "mid": {
-    "polars": "df['column'].str.slice(start, length)",
-    "sheets": "=MID({range}, {start}, {length})",
-    "validation": "exact_match",
-    "complexity_level": "simple",
-    "description": "Extract characters from middle"
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "simple_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "df['column'].var(ddof=1)",
+    "sheets_function": "VAR",
+    "array_context": false,
+    "helper_columns": []
   }
 }

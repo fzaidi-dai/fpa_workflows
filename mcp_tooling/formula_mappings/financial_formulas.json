@@ -1,109 +1,46 @@
 {
-  "npv": {
-    "polars": "sum([cf / (1 + rate) ** i for i, cf in enumerate(cash_flows)])",
-    "sheets": "=NPV({rate}, {cash_flows_range})",
-    "validation": "tolerance_0.01",
-    "complexity_level": "complex",
-    "description": "Net Present Value calculation",
-    "implementation_status": "completed"
-  },
-  "irr": {
-    "polars": "solve_irr(cash_flows)",
-    "sheets": "=IRR({cash_flows_range})",
-    "validation": "tolerance_0.001",
-    "complexity_level": "complex",
-    "description": "Internal Rate of Return",
-    "implementation_status": "completed"
-  },
-  "pv": {
-    "polars": "payment * ((1 - (1 + rate) ** -periods) / rate)",
-    "sheets": "=PV({rate}, {periods}, {payment}, {future_value}, {type})",
+  "beta": {
+    "polars": "covariance(asset_returns, market_returns) / variance(market_returns)",
+    "sheets": "=COVARIANCE.P({asset_range}, {market_range}) / VAR.P({market_range})",
     "validation": "tolerance_0.01",
     "complexity_level": "moderate",
-    "description": "Present Value of annuity",
-    "implementation_status": "completed"
+    "description": "Beta coefficient calculation",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "covariance(asset_returns, market_returns) / variance(market_returns)",
+    "sheets_function": "",
+    "array_context": false,
+    "helper_columns": []
   },
-  "fv": {
-    "polars": "payment * (((1 + rate) ** periods - 1) / rate)",
-    "sheets": "=FV({rate}, {periods}, {payment}, {present_value}, {type})",
-    "validation": "tolerance_0.01",
-    "complexity_level": "moderate",
-    "description": "Future Value of annuity",
-    "implementation_status": "completed"
-  },
-  "pmt": {
-    "polars": "present_value * (rate * (1 + rate) ** periods) / ((1 + rate) ** periods - 1)",
-    "sheets": "=PMT({rate}, {periods}, {present_value}, {future_value}, {type})",
-    "validation": "tolerance_0.01",
-    "complexity_level": "moderate",
-    "description": "Payment amount for loan/annuity",
-    "implementation_status": "completed"
-  },
-  "rate": {
-    "polars": "solve_rate(periods, payment, present_value, future_value)",
-    "sheets": "=RATE({periods}, {payment}, {present_value}, {future_value}, {type}, {guess})",
-    "validation": "tolerance_0.001",
-    "complexity_level": "complex",
-    "description": "Interest rate per period",
-    "implementation_status": "completed"
-  },
-  "nper": {
-    "polars": "math.log(1 + (future_value * rate) / payment) / math.log(1 + rate)",
-    "sheets": "=NPER({rate}, {payment}, {present_value}, {future_value}, {type})",
-    "validation": "tolerance_0.01",
-    "complexity_level": "moderate",
-    "description": "Number of payment periods",
-    "implementation_status": "completed"
-  },
-  "xnpv": {
-    "polars": "sum([cf / (1 + rate) ** ((date - start_date).days / 365) for cf, date in zip(cash_flows, dates)])",
-    "sheets": "=XNPV({rate}, {cash_flows_range}, {dates_range})",
+  "black_scholes": {
+    "polars": "calculate_black_scholes(S, K, T, r, sigma, option_type)",
+    "sheets": "=BLACK_SCHOLES({spot_price}, {strike_price}, {time_to_expiry}, {risk_free_rate}, {volatility}, {option_type})",
     "validation": "tolerance_0.01",
     "complexity_level": "complex",
-    "description": "Net Present Value with irregular periods",
-    "implementation_status": "completed"
-  },
-  "xirr": {
-    "polars": "solve_xirr(cash_flows, dates)",
-    "sheets": "=XIRR({cash_flows_range}, {dates_range}, {guess})",
-    "validation": "tolerance_0.001",
-    "complexity_level": "complex",
-    "description": "Internal Rate of Return with irregular periods",
-    "implementation_status": "completed"
-  },
-  "mirr": {
-    "polars": "((fv_positive / pv_negative) ** (1 / periods) - 1)",
-    "sheets": "=MIRR({cash_flows_range}, {finance_rate}, {reinvest_rate})",
-    "validation": "tolerance_0.001",
-    "complexity_level": "complex",
-    "description": "Modified Internal Rate of Return",
-    "implementation_status": "completed"
-  },
-  "payback_period": {
-    "polars": "calculate_payback_period(cash_flows)",
-    "sheets": "=INDEX(MATCH(TRUE, CUMSUM({cash_flows_range})>=0, 0), 1)",
-    "validation": "tolerance_0.01",
-    "complexity_level": "complex",
-    "helper_columns": ["cumulative_cf"],
-    "description": "Payback period calculation",
-    "implementation_status": "completed"
-  },
-  "discounted_payback": {
-    "polars": "calculate_discounted_payback(cash_flows, discount_rate)",
-    "sheets": "=INDEX(MATCH(TRUE, CUMSUM({discounted_cf_range})>=0, 0), 1)",
-    "validation": "tolerance_0.01",
-    "complexity_level": "complex",
-    "helper_columns": ["discounted_cf", "cumulative_discounted_cf"],
-    "description": "Discounted payback period",
-    "implementation_status": "completed"
-  },
-  "profitability_index": {
-    "polars": "npv_positive_flows / abs(initial_investment)",
-    "sheets": "=NPV({rate}, {positive_flows_range}) / ABS({initial_investment})",
-    "validation": "tolerance_0.01",
-    "complexity_level": "moderate",
-    "description": "Profitability index calculation",
-    "implementation_status": "completed"
+    "description": "Black-Scholes option pricing",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "calculate_black_scholes(S, K, T, r, sigma, option_type)",
+    "sheets_function": "BLACK_SCHOLES",
+    "array_context": false,
+    "helper_columns": [
+      "d1",
+      "d2",
+      "nd1",
+      "nd2"
+    ]
   },
   "cagr": {
     "polars": "(ending_value / beginning_value) ** (1 / years) - 1",
@@ -111,7 +48,18 @@
     "validation": "tolerance_0.001",
     "complexity_level": "simple",
     "description": "Compound Annual Growth Rate",
-    "implementation_status": "completed"
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "(ending_value / beginning_value) ** (1 / years) - 1",
+    "sheets_function": "POWER",
+    "array_context": false,
+    "helper_columns": []
   },
   "capm": {
     "polars": "risk_free_rate + beta * (market_return - risk_free_rate)",
@@ -119,7 +67,772 @@
     "validation": "tolerance_0.001",
     "complexity_level": "simple",
     "description": "Capital Asset Pricing Model",
-    "implementation_status": "completed"
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "risk_free_rate + beta * (market_return - risk_free_rate)",
+    "sheets_function": "",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "cumipmt": {
+    "polars": "Sum of interest payments over period range",
+    "sheets": "=CUMIPMT({rate}, {nper}, {pv}, {start_period}, {end_period}, {type})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Cumulative interest paid between periods",
+    "implementation_status": "pending",
+    "syntax": "CUMIPMT(rate, nper, pv, start_period, end_period, type)",
+    "parameters": {
+      "end_period": {
+        "description": "Last period in range",
+        "required": true,
+        "type": "number"
+      },
+      "nper": {
+        "description": "Total number of periods",
+        "required": true,
+        "type": "number"
+      },
+      "pv": {
+        "description": "Present value (loan amount)",
+        "required": true,
+        "type": "number"
+      },
+      "rate": {
+        "description": "Interest rate per period",
+        "required": true,
+        "type": "number"
+      },
+      "start_period": {
+        "description": "First period in range",
+        "required": true,
+        "type": "number"
+      },
+      "type": {
+        "description": "Payment timing (0=end, 1=beginning)",
+        "required": false,
+        "type": "integer"
+      }
+    },
+    "examples": {
+      "first_year_interest": "CUMIPMT(0.05/12, 360, 200000, 1, 12, 0)",
+      "total_interest": "CUMIPMT(0.05/12, 360, 200000, 1, 360, 0)"
+    },
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Sum of interest payments over period range",
+    "sheets_function": "CUMIPMT",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "cumprinc": {
+    "polars": "Sum of principal payments over period range",
+    "sheets": "=CUMPRINC({rate}, {nper}, {pv}, {start_period}, {end_period}, {type})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Cumulative principal paid between periods",
+    "implementation_status": "pending",
+    "syntax": "CUMPRINC(rate, nper, pv, start_period, end_period, type)",
+    "parameters": {
+      "end_period": {
+        "description": "Last period in range",
+        "required": true,
+        "type": "number"
+      },
+      "nper": {
+        "description": "Total number of periods",
+        "required": true,
+        "type": "number"
+      },
+      "pv": {
+        "description": "Present value (loan amount)",
+        "required": true,
+        "type": "number"
+      },
+      "rate": {
+        "description": "Interest rate per period",
+        "required": true,
+        "type": "number"
+      },
+      "start_period": {
+        "description": "First period in range",
+        "required": true,
+        "type": "number"
+      },
+      "type": {
+        "description": "Payment timing (0=end, 1=beginning)",
+        "required": false,
+        "type": "integer"
+      }
+    },
+    "examples": {
+      "first_year_principal": "CUMPRINC(0.05/12, 360, 200000, 1, 12, 0)",
+      "remaining_balance": "PV + CUMPRINC(rate, nper, pv, 1, current_period, type)"
+    },
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Sum of principal payments over period range",
+    "sheets_function": "CUMPRINC",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "db": {
+    "polars": "Declining balance calculation",
+    "sheets": "=DB({cost}, {salvage}, {life}, {period}, {month})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Declining balance depreciation",
+    "implementation_status": "pending",
+    "syntax": "DB(cost, salvage, life, period, month)",
+    "parameters": {
+      "cost": {
+        "description": "Initial cost of asset",
+        "required": true,
+        "type": "number"
+      },
+      "life": {
+        "description": "Useful life in periods",
+        "required": true,
+        "type": "number"
+      },
+      "month": {
+        "description": "Months in first year (default 12)",
+        "required": false,
+        "type": "number"
+      },
+      "period": {
+        "description": "Period for which to calculate depreciation",
+        "required": true,
+        "type": "number"
+      },
+      "salvage": {
+        "description": "Salvage value at end of life",
+        "required": true,
+        "type": "number"
+      }
+    },
+    "examples": {
+      "equipment_db": "DB(50000, 5000, 10, 1, 12)"
+    },
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Declining balance calculation",
+    "sheets_function": "DB",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "ddb": {
+    "polars": "Double declining balance calculation",
+    "sheets": "=DDB({cost}, {salvage}, {life}, {period}, {factor})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Double-declining balance depreciation",
+    "implementation_status": "pending",
+    "syntax": "DDB(cost, salvage, life, period, factor)",
+    "parameters": {
+      "cost": {
+        "description": "Initial cost of asset",
+        "required": true,
+        "type": "number"
+      },
+      "factor": {
+        "description": "Decline rate factor (default 2)",
+        "required": false,
+        "type": "number"
+      },
+      "life": {
+        "description": "Useful life in periods",
+        "required": true,
+        "type": "number"
+      },
+      "period": {
+        "description": "Period for which to calculate depreciation",
+        "required": true,
+        "type": "number"
+      },
+      "salvage": {
+        "description": "Salvage value at end of life",
+        "required": true,
+        "type": "number"
+      }
+    },
+    "examples": {
+      "equipment_ddb": "DDB(50000, 5000, 10, 1, 2)"
+    },
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Double declining balance calculation",
+    "sheets_function": "DDB",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "discounted_payback": {
+    "polars": "calculate_discounted_payback(cash_flows, discount_rate)",
+    "sheets": "=INDEX(MATCH(TRUE, CUMSUM({discounted_cf_range})>=0, 0), 1)",
+    "validation": "tolerance_0.01",
+    "complexity_level": "complex",
+    "description": "Discounted payback period",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "calculate_discounted_payback(cash_flows, discount_rate)",
+    "sheets_function": "INDEX",
+    "array_context": false,
+    "helper_columns": [
+      "discounted_cf",
+      "cumulative_discounted_cf"
+    ]
+  },
+  "fv": {
+    "polars": "payment * (((1 + rate) ** periods - 1) / rate)",
+    "sheets": "=FV({rate}, {periods}, {payment}, {present_value}, {type})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Future Value of annuity",
+    "implementation_status": "completed",
+    "syntax": "FV(rate, nper, pmt, pv, type)",
+    "parameters": {
+      "nper": {
+        "description": "Number of periods",
+        "required": true,
+        "type": "number"
+      },
+      "pmt": {
+        "description": "Payment per period",
+        "required": true,
+        "type": "number"
+      },
+      "pv": {
+        "description": "Present value (default 0)",
+        "required": false,
+        "type": "number"
+      },
+      "rate": {
+        "description": "Interest rate per period",
+        "required": true,
+        "type": "number"
+      },
+      "type": {
+        "description": "Payment timing (0=end, 1=beginning)",
+        "required": false,
+        "type": "integer"
+      }
+    },
+    "examples": {
+      "investment": "FV(0.05, 20, -1000, -10000, 0)",
+      "savings": "FV(0.03, 12, -100, 0, 1)"
+    },
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Future value calculation",
+    "sheets_function": "FV",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "ipmt": {
+    "polars": "Interest portion of payment calculation",
+    "sheets": "=IPMT({rate}, {per}, {nper}, {pv}, {fv}, {type})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Interest payment for specific period",
+    "implementation_status": "pending",
+    "syntax": "IPMT(rate, per, nper, pv, fv, type)",
+    "parameters": {
+      "fv": {
+        "description": "Future value (default 0)",
+        "required": false,
+        "type": "number"
+      },
+      "nper": {
+        "description": "Total number of periods",
+        "required": true,
+        "type": "number"
+      },
+      "per": {
+        "description": "Period number (1 to nper)",
+        "required": true,
+        "type": "number"
+      },
+      "pv": {
+        "description": "Present value (loan amount)",
+        "required": true,
+        "type": "number"
+      },
+      "rate": {
+        "description": "Interest rate per period",
+        "required": true,
+        "type": "number"
+      },
+      "type": {
+        "description": "Payment timing (0=end, 1=beginning)",
+        "required": false,
+        "type": "integer"
+      }
+    },
+    "examples": {
+      "monthly_interest": "IPMT(0.05/12, 1, 360, 200000, 0, 0)",
+      "year_interest": "SUMPRODUCT(IPMT(0.05/12, ROW(1:12), 360, 200000, 0, 0))"
+    },
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Interest portion of payment calculation",
+    "sheets_function": "IPMT",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "irr": {
+    "polars": "solve_irr(cash_flows)",
+    "sheets": "=IRR({cash_flows_range})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "complex",
+    "description": "Internal Rate of Return",
+    "implementation_status": "completed",
+    "syntax": "IRR(values, guess)",
+    "parameters": {
+      "guess": {
+        "description": "Initial guess for IRR (default 0.1)",
+        "required": false,
+        "type": "number"
+      },
+      "values": {
+        "description": "Cash flow values (must include negative and positive)",
+        "required": true,
+        "type": "array"
+      }
+    },
+    "examples": {
+      "basic_irr": "IRR({-1000, 300, 400, 300, 200})",
+      "with_guess": "IRR(A1:A5, 0.1)"
+    },
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Iterative calculation to find IRR",
+    "sheets_function": "IRR",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "mirr": {
+    "polars": "((fv_positive / pv_negative) ** (1 / periods) - 1)",
+    "sheets": "=MIRR({cash_flows_range}, {finance_rate}, {reinvest_rate})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "complex",
+    "description": "Modified Internal Rate of Return",
+    "implementation_status": "completed",
+    "syntax": "MIRR(values, finance_rate, reinvest_rate)",
+    "parameters": {
+      "finance_rate": {
+        "description": "Rate for financing negative cash flows",
+        "required": true,
+        "type": "number"
+      },
+      "reinvest_rate": {
+        "description": "Rate for reinvesting positive cash flows",
+        "required": true,
+        "type": "number"
+      },
+      "values": {
+        "description": "Cash flow values",
+        "required": true,
+        "type": "array"
+      }
+    },
+    "examples": {
+      "basic_mirr": "MIRR(A1:A5, 0.1, 0.12)"
+    },
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "MIRR calculation with different rates",
+    "sheets_function": "MIRR",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "nper": {
+    "polars": "math.log(1 + (future_value * rate) / payment) / math.log(1 + rate)",
+    "sheets": "=NPER({rate}, {payment}, {present_value}, {future_value}, {type})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Number of payment periods",
+    "implementation_status": "completed",
+    "syntax": "NPER(rate, pmt, pv, fv, type)",
+    "parameters": {
+      "fv": {
+        "description": "Future value (default 0)",
+        "required": false,
+        "type": "number"
+      },
+      "pmt": {
+        "description": "Payment per period",
+        "required": true,
+        "type": "number"
+      },
+      "pv": {
+        "description": "Present value",
+        "required": true,
+        "type": "number"
+      },
+      "rate": {
+        "description": "Interest rate per period",
+        "required": true,
+        "type": "number"
+      },
+      "type": {
+        "description": "Payment timing (0=end, 1=beginning)",
+        "required": false,
+        "type": "integer"
+      }
+    },
+    "examples": {
+      "loan_term": "NPER(0.05/12, -1500, 200000, 0, 0)",
+      "savings_time": "NPER(0.06/12, -500, 0, 50000, 1)"
+    },
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Period calculation using logarithms",
+    "sheets_function": "NPER",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "npv": {
+    "polars": "sum([cf / (1 + rate) ** i for i, cf in enumerate(cash_flows)])",
+    "sheets": "=NPV({rate}, {cash_flows_range})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "complex",
+    "description": "Net Present Value calculation",
+    "implementation_status": "completed",
+    "syntax": "NPV(rate, value1, value2, ...)",
+    "parameters": {
+      "rate": {
+        "description": "Discount rate per period",
+        "required": true,
+        "type": "number"
+      },
+      "values": {
+        "description": "Cash flow values (first is often initial investment)",
+        "required": true,
+        "type": "array"
+      }
+    },
+    "examples": {
+      "basic": "NPV(0.1, -1000, 300, 400, 300, 200)",
+      "with_range": "NPV(0.1, A1:A5)"
+    },
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Custom NPV calculation using discount factors",
+    "sheets_function": "NPV",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "payback_period": {
+    "polars": "calculate_payback_period(cash_flows)",
+    "sheets": "=INDEX(MATCH(TRUE, CUMSUM({cash_flows_range})>=0, 0), 1)",
+    "validation": "tolerance_0.01",
+    "complexity_level": "complex",
+    "description": "Payback period calculation",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "calculate_payback_period(cash_flows)",
+    "sheets_function": "INDEX",
+    "array_context": false,
+    "helper_columns": [
+      "cumulative_cf"
+    ]
+  },
+  "pmt": {
+    "polars": "present_value * (rate * (1 + rate) ** periods) / ((1 + rate) ** periods - 1)",
+    "sheets": "=PMT({rate}, {periods}, {present_value}, {future_value}, {type})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Payment amount for loan/annuity",
+    "implementation_status": "completed",
+    "syntax": "PMT(rate, nper, pv, fv, type)",
+    "parameters": {
+      "fv": {
+        "description": "Future value (default 0)",
+        "required": false,
+        "type": "number"
+      },
+      "nper": {
+        "description": "Number of periods",
+        "required": true,
+        "type": "number"
+      },
+      "pv": {
+        "description": "Present value (loan amount)",
+        "required": true,
+        "type": "number"
+      },
+      "rate": {
+        "description": "Interest rate per period",
+        "required": true,
+        "type": "number"
+      },
+      "type": {
+        "description": "Payment timing (0=end, 1=beginning)",
+        "required": false,
+        "type": "integer"
+      }
+    },
+    "examples": {
+      "loan_payment": "PMT(0.05/12, 360, 200000, 0, 0)",
+      "savings_goal": "PMT(0.06/12, 120, 0, 50000, 1)"
+    },
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Payment calculation",
+    "sheets_function": "PMT",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "ppmt": {
+    "polars": "Principal portion of payment calculation",
+    "sheets": "=PPMT({rate}, {per}, {nper}, {pv}, {fv}, {type})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Principal payment for specific period",
+    "implementation_status": "pending",
+    "syntax": "PPMT(rate, per, nper, pv, fv, type)",
+    "parameters": {
+      "fv": {
+        "description": "Future value (default 0)",
+        "required": false,
+        "type": "number"
+      },
+      "nper": {
+        "description": "Total number of periods",
+        "required": true,
+        "type": "number"
+      },
+      "per": {
+        "description": "Period number (1 to nper)",
+        "required": true,
+        "type": "number"
+      },
+      "pv": {
+        "description": "Present value (loan amount)",
+        "required": true,
+        "type": "number"
+      },
+      "rate": {
+        "description": "Interest rate per period",
+        "required": true,
+        "type": "number"
+      },
+      "type": {
+        "description": "Payment timing (0=end, 1=beginning)",
+        "required": false,
+        "type": "integer"
+      }
+    },
+    "examples": {
+      "cumulative_principal": "CUMPRINC(0.05/12, 360, 200000, 1, 12, 0)",
+      "monthly_principal": "PPMT(0.05/12, 1, 360, 200000, 0, 0)"
+    },
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Principal portion of payment calculation",
+    "sheets_function": "PPMT",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "profitability_index": {
+    "polars": "npv_positive_flows / abs(initial_investment)",
+    "sheets": "=NPV({rate}, {positive_flows_range}) / ABS({initial_investment})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Profitability index calculation",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "npv_positive_flows / abs(initial_investment)",
+    "sheets_function": "NPV",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "pv": {
+    "polars": "payment * ((1 - (1 + rate) ** -periods) / rate)",
+    "sheets": "=PV({rate}, {periods}, {payment}, {future_value}, {type})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Present Value of annuity",
+    "implementation_status": "completed",
+    "syntax": "PV(rate, nper, pmt, fv, type)",
+    "parameters": {
+      "fv": {
+        "description": "Future value (default 0)",
+        "required": false,
+        "type": "number"
+      },
+      "nper": {
+        "description": "Number of periods",
+        "required": true,
+        "type": "number"
+      },
+      "pmt": {
+        "description": "Payment per period",
+        "required": true,
+        "type": "number"
+      },
+      "rate": {
+        "description": "Interest rate per period",
+        "required": true,
+        "type": "number"
+      },
+      "type": {
+        "description": "Payment timing (0=end, 1=beginning)",
+        "required": false,
+        "type": "integer"
+      }
+    },
+    "examples": {
+      "annuity": "PV(0.05, 20, -1000, 0, 0)",
+      "with_future_value": "PV(0.05, 20, -1000, 10000, 1)"
+    },
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Present value calculation",
+    "sheets_function": "PV",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "rate": {
+    "polars": "solve_rate(periods, payment, present_value, future_value)",
+    "sheets": "=RATE({periods}, {payment}, {present_value}, {future_value}, {type}, {guess})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "complex",
+    "description": "Interest rate per period",
+    "implementation_status": "completed",
+    "syntax": "RATE(nper, pmt, pv, fv, type, guess)",
+    "parameters": {
+      "fv": {
+        "description": "Future value (default 0)",
+        "required": false,
+        "type": "number"
+      },
+      "guess": {
+        "description": "Initial guess for rate",
+        "required": false,
+        "type": "number"
+      },
+      "nper": {
+        "description": "Number of periods",
+        "required": true,
+        "type": "number"
+      },
+      "pmt": {
+        "description": "Payment per period",
+        "required": true,
+        "type": "number"
+      },
+      "pv": {
+        "description": "Present value",
+        "required": true,
+        "type": "number"
+      },
+      "type": {
+        "description": "Payment timing (0=end, 1=beginning)",
+        "required": false,
+        "type": "integer"
+      }
+    },
+    "examples": {
+      "investment_return": "RATE(20, 0, -10000, 50000, 0)",
+      "loan_rate": "RATE(360, -1500, 200000, 0, 0)"
+    },
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Iterative rate calculation",
+    "sheets_function": "RATE",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "scenario_analysis": {
+    "polars": "Create scenarios as different columns or datasets",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Financial modeling with multiple scenarios",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Create scenarios as different columns or datasets",
+    "sheets_function": "",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "sensitivity_analysis": {
+    "polars": "Vary parameters and observe output changes",
+    "sheets": "",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Impact analysis of parameter changes",
+    "implementation_status": "pending",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Vary parameters and observe output changes",
+    "sheets_function": "",
+    "array_context": false,
+    "helper_columns": []
   },
   "sharpe_ratio": {
     "polars": "(portfolio_return - risk_free_rate) / portfolio_volatility",
@@ -127,15 +840,97 @@
     "validation": "tolerance_0.01",
     "complexity_level": "simple",
     "description": "Sharpe ratio calculation",
-    "implementation_status": "completed"
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "(portfolio_return - risk_free_rate) / portfolio_volatility",
+    "sheets_function": "",
+    "array_context": false,
+    "helper_columns": []
   },
-  "beta": {
-    "polars": "covariance(asset_returns, market_returns) / variance(market_returns)",
-    "sheets": "=COVARIANCE.P({asset_range}, {market_range}) / VAR.P({market_range})",
-    "validation": "tolerance_0.01",
+  "sln": {
+    "polars": "(cost - salvage) / life",
+    "sheets": "=SLN({cost}, {salvage}, {life})",
+    "validation": "tolerance_0.001",
     "complexity_level": "moderate",
-    "description": "Beta coefficient calculation",
-    "implementation_status": "completed"
+    "description": "Straight-line depreciation",
+    "implementation_status": "pending",
+    "syntax": "SLN(cost, salvage, life)",
+    "parameters": {
+      "cost": {
+        "description": "Initial cost of asset",
+        "required": true,
+        "type": "number"
+      },
+      "life": {
+        "description": "Useful life in periods",
+        "required": true,
+        "type": "number"
+      },
+      "salvage": {
+        "description": "Salvage value at end of life",
+        "required": true,
+        "type": "number"
+      }
+    },
+    "examples": {
+      "equipment": "SLN(50000, 5000, 10)"
+    },
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "(cost - salvage) / life",
+    "sheets_function": "SLN",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "syd": {
+    "polars": "Sum of years digits calculation",
+    "sheets": "=SYD({cost}, {salvage}, {life}, {period})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Sum-of-years digits depreciation",
+    "implementation_status": "pending",
+    "syntax": "SYD(cost, salvage, life, period)",
+    "parameters": {
+      "cost": {
+        "description": "Initial cost of asset",
+        "required": true,
+        "type": "number"
+      },
+      "life": {
+        "description": "Useful life in periods",
+        "required": true,
+        "type": "number"
+      },
+      "period": {
+        "description": "Period for which to calculate depreciation",
+        "required": true,
+        "type": "number"
+      },
+      "salvage": {
+        "description": "Salvage value at end of life",
+        "required": true,
+        "type": "number"
+      }
+    },
+    "examples": {
+      "equipment_syd": "SYD(50000, 5000, 10, 1)"
+    },
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "Sum of years digits calculation",
+    "sheets_function": "SYD",
+    "array_context": false,
+    "helper_columns": []
   },
   "var_historical": {
     "polars": "returns.quantile(confidence_level)",
@@ -143,7 +938,18 @@
     "validation": "tolerance_0.01",
     "complexity_level": "moderate",
     "description": "Historical Value at Risk",
-    "implementation_status": "completed"
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "returns.quantile(confidence_level)",
+    "sheets_function": "PERCENTILE",
+    "array_context": false,
+    "helper_columns": []
   },
   "var_parametric": {
     "polars": "portfolio_value * norm.ppf(confidence_level) * volatility",
@@ -151,15 +957,73 @@
     "validation": "tolerance_0.01",
     "complexity_level": "moderate",
     "description": "Parametric Value at Risk",
-    "implementation_status": "completed"
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "portfolio_value * norm.ppf(confidence_level) * volatility",
+    "sheets_function": "",
+    "array_context": false,
+    "helper_columns": []
   },
-  "black_scholes": {
-    "polars": "calculate_black_scholes(S, K, T, r, sigma, option_type)",
-    "sheets": "=BLACK_SCHOLES({spot_price}, {strike_price}, {time_to_expiry}, {risk_free_rate}, {volatility}, {option_type})",
+  "xirr": {
+    "polars": "solve_xirr(cash_flows, dates)",
+    "sheets": "=XIRR({cash_flows_range}, {dates_range}, {guess})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "complex",
+    "description": "Internal Rate of Return with irregular periods",
+    "implementation_status": "completed",
+    "syntax": "XIRR(values, dates, guess)",
+    "parameters": {
+      "dates": {
+        "description": "Dates corresponding to cash flows",
+        "required": true,
+        "type": "array"
+      },
+      "guess": {
+        "description": "Initial guess for IRR",
+        "required": false,
+        "type": "number"
+      },
+      "values": {
+        "description": "Cash flow values",
+        "required": true,
+        "type": "array"
+      }
+    },
+    "examples": {
+      "irregular_flows": "XIRR(B1:B5, A1:A5, 0.1)"
+    },
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "IRR calculation with actual dates",
+    "sheets_function": "XIRR",
+    "array_context": false,
+    "helper_columns": []
+  },
+  "xnpv": {
+    "polars": "sum([cf / (1 + rate) ** ((date - start_date).days / 365) for cf, date in zip(cash_flows, dates)])",
+    "sheets": "=XNPV({rate}, {cash_flows_range}, {dates_range})",
     "validation": "tolerance_0.01",
     "complexity_level": "complex",
-    "helper_columns": ["d1", "d2", "nd1", "nd2"],
-    "description": "Black-Scholes option pricing",
-    "implementation_status": "completed"
+    "description": "Net Present Value with irregular periods",
+    "implementation_status": "completed",
+    "syntax": "",
+    "parameters": {},
+    "examples": {},
+    "use_cases": [],
+    "category": "financial_formulas",
+    "notes": "",
+    "version_added": "",
+    "polars_implementation": "sum([cf / (1 + rate) ** ((date - start_date).days / 365) for cf, date in zip(cash_flows, dates)])",
+    "sheets_function": "XNPV",
+    "array_context": false,
+    "helper_columns": []
   }
 }

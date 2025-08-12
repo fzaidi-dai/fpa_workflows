@@ -1,0 +1,125 @@
+{
+  "pivot_sum": {
+    "polars": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').sum())",
+    "sheets": "=QUERY({range}, \"SELECT {row_field}, {col_field}, SUM({value_field}) GROUP BY {row_field}, {col_field}\")",
+    "validation": "tolerance_0.001",
+    "complexity_level": "complex",
+    "description": "Pivot table with sum aggregation",
+    "implementation_status": "completed"
+  },
+  "pivot_count": {
+    "polars": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').count())",
+    "sheets": "=QUERY({range}, \"SELECT {row_field}, {col_field}, COUNT({value_field}) GROUP BY {row_field}, {col_field}\")",
+    "validation": "exact_match",
+    "complexity_level": "complex",
+    "description": "Pivot table with count aggregation",
+    "implementation_status": "completed"
+  },
+  "pivot_average": {
+    "polars": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').mean())",
+    "sheets": "=QUERY({range}, \"SELECT {row_field}, {col_field}, AVG({value_field}) GROUP BY {row_field}, {col_field}\")",
+    "validation": "tolerance_0.01",
+    "complexity_level": "complex",
+    "description": "Pivot table with average aggregation",
+    "implementation_status": "completed"
+  },
+  "pivot_max": {
+    "polars": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').max())",
+    "sheets": "=QUERY({range}, \"SELECT {row_field}, {col_field}, MAX({value_field}) GROUP BY {row_field}, {col_field}\")",
+    "validation": "exact_match",
+    "complexity_level": "complex",
+    "description": "Pivot table with max aggregation",
+    "implementation_status": "completed"
+  },
+  "pivot_min": {
+    "polars": "df.group_by(['row_field', 'col_field']).agg(pl.col('value_field').min())",
+    "sheets": "=QUERY({range}, \"SELECT {row_field}, {col_field}, MIN({value_field}) GROUP BY {row_field}, {col_field}\")",
+    "validation": "exact_match",
+    "complexity_level": "complex",
+    "description": "Pivot table with min aggregation",
+    "implementation_status": "completed"
+  },
+  "group_by_sum": {
+    "polars": "df.group_by('group_field').agg(pl.col('value_field').sum())",
+    "sheets": "=QUERY({range}, \"SELECT {group_field}, SUM({value_field}) GROUP BY {group_field}\")",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Group by with sum aggregation",
+    "implementation_status": "completed"
+  },
+  "group_by_count": {
+    "polars": "df.group_by('group_field').agg(pl.col('value_field').count())",
+    "sheets": "=QUERY({range}, \"SELECT {group_field}, COUNT({value_field}) GROUP BY {group_field}\")",
+    "validation": "exact_match",
+    "complexity_level": "moderate",
+    "description": "Group by with count aggregation",
+    "implementation_status": "completed"
+  },
+  "crosstab": {
+    "polars": "df.pivot(values='value_field', index='row_field', columns='col_field', aggregate_function='sum')",
+    "sheets": "=QUERY({range}, \"SELECT {row_field}, PIVOT SUM({value_field}) FOR {col_field} IN ({col_values})\")",
+    "validation": "tolerance_0.001",
+    "complexity_level": "complex",
+    "helper_columns": ["pivot_helper"],
+    "description": "Cross-tabulation pivot",
+    "implementation_status": "completed"
+  },
+  "subtotal": {
+    "polars": "df.group_by('group_field', maintain_order=True).agg(pl.col('value_field').sum())",
+    "sheets": "=SUBTOTAL(9, {range})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Subtotal with sum function",
+    "implementation_status": "completed"
+  },
+  "running_total": {
+    "polars": "df.with_columns(pl.col('value_field').cumsum().alias('running_total'))",
+    "sheets": "=SUM({range_start}:{current_row})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "moderate",
+    "description": "Running total calculation",
+    "implementation_status": "completed"
+  },
+  "percent_of_total": {
+    "polars": "df.with_columns((pl.col('value_field') / pl.col('value_field').sum() * 100).alias('percent'))",
+    "sheets": "={current_cell}/SUM({total_range})*100",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Percentage of total",
+    "implementation_status": "completed"
+  },
+  "rank_partition": {
+    "polars": "df.with_columns(pl.col('value_field').rank(method='ordinal').over('partition_field').alias('rank'))",
+    "sheets": "=RANK({current_cell}, IF({partition_range}={current_partition}, {value_range}), 0)",
+    "validation": "exact_match",
+    "complexity_level": "complex",
+    "helper_columns": ["partition_filter"],
+    "description": "Rank within partition",
+    "implementation_status": "completed"
+  },
+  "dense_rank": {
+    "polars": "df.with_columns(pl.col('value_field').rank(method='dense').alias('dense_rank'))",
+    "sheets": "=RANK({current_cell}, {value_range}, 0)",
+    "validation": "exact_match",
+    "complexity_level": "moderate",
+    "description": "Dense ranking of values",
+    "implementation_status": "completed"
+  },
+  "percentile_rank": {
+    "polars": "df.with_columns(pl.col('value_field').rank(method='average') / pl.col('value_field').count()).alias('percentile_rank')",
+    "sheets": "=PERCENTRANK({value_range}, {current_cell})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Percentile rank of values",
+    "implementation_status": "completed"
+  },
+  "moving_sum": {
+    "polars": "df.with_columns(pl.col('value_field').rolling_sum(window_size).alias('moving_sum'))",
+    "sheets": "=SUM(OFFSET({current_cell}, -{window_size}+1, 0, {window_size}, 1))",
+    "validation": "tolerance_0.001",
+    "complexity_level": "complex",
+    "helper_columns": ["window_range"],
+    "description": "Moving sum over window",
+    "implementation_status": "completed"
+  }
+}
