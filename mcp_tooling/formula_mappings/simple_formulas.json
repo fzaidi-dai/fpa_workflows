@@ -1,0 +1,158 @@
+{
+  "sum": {
+    "polars": "df['column'].sum()",
+    "sheets": "=SUM({range})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Sum all values in a range"
+  },
+  "average": {
+    "polars": "df['column'].mean()",
+    "sheets": "=AVERAGE({range})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "simple",
+    "description": "Calculate average of values in a range"
+  },
+  "count": {
+    "polars": "df['column'].count()",
+    "sheets": "=COUNT({range})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Count numeric values in a range"
+  },
+  "counta": {
+    "polars": "df.select(pl.col('column').count()).item()",
+    "sheets": "=COUNTA({range})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Count non-empty cells in a range"
+  },
+  "max": {
+    "polars": "df['column'].max()",
+    "sheets": "=MAX({range})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Find maximum value in a range"
+  },
+  "min": {
+    "polars": "df['column'].min()",
+    "sheets": "=MIN({range})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Find minimum value in a range"
+  },
+  "median": {
+    "polars": "df['column'].median()",
+    "sheets": "=MEDIAN({range})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "simple",
+    "description": "Calculate median value in a range"
+  },
+  "mode": {
+    "polars": "df['column'].mode().first()",
+    "sheets": "=MODE({range})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Find most frequently occurring value"
+  },
+  "stdev": {
+    "polars": "df['column'].std(ddof=1)",
+    "sheets": "=STDEV({range})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "simple",
+    "description": "Calculate standard deviation (sample)",
+    "implementation_status": "completed"
+  },
+  "var": {
+    "polars": "df['column'].var(ddof=1)",
+    "sheets": "=VAR({range})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "simple",
+    "description": "Calculate variance (sample)",
+    "implementation_status": "completed"
+  },
+  "round": {
+    "polars": "df['column'].round(decimals)",
+    "sheets": "=ROUND({range}, {decimals})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Round numbers to specified decimal places"
+  },
+  "abs": {
+    "polars": "df['column'].abs()",
+    "sheets": "=ABS({range})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Calculate absolute value"
+  },
+  "sqrt": {
+    "polars": "df['column'].sqrt()",
+    "sheets": "=SQRT({range})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "simple",
+    "description": "Calculate square root"
+  },
+  "power": {
+    "polars": "df['column'] ** power",
+    "sheets": "=POWER({range}, {power})",
+    "validation": "tolerance_0.001",
+    "complexity_level": "simple",
+    "description": "Raise to a power"
+  },
+  "concatenate": {
+    "polars": "df['col1'].str.concat(df['col2'])",
+    "sheets": "=CONCATENATE({range1}, {range2})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Concatenate text values"
+  },
+  "upper": {
+    "polars": "df['column'].str.to_uppercase()",
+    "sheets": "=UPPER({range})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Convert text to uppercase"
+  },
+  "lower": {
+    "polars": "df['column'].str.to_lowercase()",
+    "sheets": "=LOWER({range})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Convert text to lowercase"
+  },
+  "len": {
+    "polars": "df['column'].str.len_chars()",
+    "sheets": "=LEN({range})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Get length of text"
+  },
+  "trim": {
+    "polars": "df['column'].str.strip_chars()",
+    "sheets": "=TRIM({range})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Remove extra spaces"
+  },
+  "left": {
+    "polars": "df['column'].str.slice(0, num_chars)",
+    "sheets": "=LEFT({range}, {num_chars})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Extract characters from left"
+  },
+  "right": {
+    "polars": "df['column'].str.slice(-num_chars)",
+    "sheets": "=RIGHT({range}, {num_chars})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Extract characters from right"
+  },
+  "mid": {
+    "polars": "df['column'].str.slice(start, length)",
+    "sheets": "=MID({range}, {start}, {length})",
+    "validation": "exact_match",
+    "complexity_level": "simple",
+    "description": "Extract characters from middle"
+  }
+}

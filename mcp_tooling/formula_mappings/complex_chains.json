@@ -1,0 +1,140 @@
+{
+  "customer_lifetime_value": {
+    "polars": "df.group_by('customer_id').agg(pl.col('revenue').sum(), pl.col('months_active').max()).with_columns((pl.col('revenue') * pl.col('months_active') / 12).alias('clv'))",
+    "sheets": "=SUMIF({customer_range}, {customer_id}, {revenue_range}) * MAXIFS({months_range}, {customer_range}, {customer_id}) / 12",
+    "validation": "tolerance_0.01",
+    "complexity_level": "complex",
+    "helper_columns": ["customer_revenue", "customer_tenure"],
+    "description": "Customer Lifetime Value calculation with tenure adjustment"
+  },
+  "customer_acquisition_cost": {
+    "polars": "total_marketing_spend / new_customers_acquired",
+    "sheets": "=SUM({marketing_spend_range}) / COUNTIF({acquisition_date_range}, \">=\"&{period_start})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Customer Acquisition Cost calculation"
+  },
+  "churn_rate": {
+    "polars": "customers_churned / customers_at_start * 100",
+    "sheets": "=COUNTIF({status_range}, \"Churned\") / COUNTIF({status_range}, \"<>New\") * 100",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Customer churn rate percentage"
+  },
+  "cohort_retention": {
+    "polars": "df.group_by(['cohort', 'month']).agg((pl.col('active_customers') / pl.col('cohort_size')).alias('retention_rate'))",
+    "sheets": "=COUNTIFS({cohort_range}, {cohort_value}, {month_range}, {month_value}, {status_range}, \"Active\") / COUNTIF({cohort_range}, {cohort_value})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "complex",
+    "helper_columns": ["cohort_size", "active_in_month"],
+    "description": "Cohort retention rate analysis"
+  },
+  "mrr_growth": {
+    "polars": "((current_month_mrr - previous_month_mrr) / previous_month_mrr) * 100",
+    "sheets": "=(SUMIF({date_range}, \">=\"&EOMONTH({current_month}, 0), {mrr_range}) - SUMIF({date_range}, \">=\"&EOMONTH({current_month}, -1), {mrr_range})) / SUMIF({date_range}, \">=\"&EOMONTH({current_month}, -1), {mrr_range}) * 100",
+    "validation": "tolerance_0.01",
+    "complexity_level": "complex",
+    "helper_columns": ["current_mrr", "previous_mrr"],
+    "description": "Monthly Recurring Revenue growth rate"
+  },
+  "revenue_forecast": {
+    "polars": "df.with_columns(pl.col('historical_revenue').rolling_mean(window_size=3).shift(1).alias('forecast'))",
+    "sheets": "=AVERAGE(OFFSET({current_cell}, -{forecast_window}, 0, {forecast_window}, 1))",
+    "validation": "tolerance_0.01",
+    "complexity_level": "complex",
+    "helper_columns": ["moving_average_base"],
+    "description": "Revenue forecast using moving average"
+  },
+  "seasonal_adjustment": {
+    "polars": "df.with_columns((pl.col('actual') / pl.col('seasonal_index')).alias('seasonally_adjusted'))",
+    "sheets": "={actual_value} / INDEX({seasonal_index_range}, MONTH({date_cell}))",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Seasonal adjustment calculation"
+  },
+  "variance_analysis": {
+    "polars": "df.with_columns((pl.col('actual') - pl.col('budget')).alias('variance'), ((pl.col('actual') - pl.col('budget')) / pl.col('budget') * 100).alias('variance_percent'))",
+    "sheets": "={actual_range} - {budget_range}",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Budget variance analysis (absolute and percentage)"
+  },
+  "break_even_analysis": {
+    "polars": "fixed_costs / (price_per_unit - variable_cost_per_unit)",
+    "sheets": "={fixed_costs} / ({price_per_unit} - {variable_cost_per_unit})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "simple",
+    "description": "Break-even point in units"
+  },
+  "inventory_turnover": {
+    "polars": "cost_of_goods_sold / average_inventory",
+    "sheets": "={cogs} / AVERAGE({inventory_range})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "simple",
+    "description": "Inventory turnover ratio"
+  },
+  "working_capital_ratio": {
+    "polars": "current_assets / current_liabilities",
+    "sheets": "=SUM({current_assets_range}) / SUM({current_liabilities_range})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "simple",
+    "description": "Working capital ratio calculation"
+  },
+  "debt_to_equity": {
+    "polars": "total_debt / total_equity",
+    "sheets": "=SUM({debt_range}) / SUM({equity_range})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "simple",
+    "description": "Debt-to-equity ratio"
+  },
+  "return_on_assets": {
+    "polars": "net_income / average_total_assets",
+    "sheets": "={net_income} / AVERAGE({total_assets_range})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "simple",
+    "description": "Return on Assets calculation"
+  },
+  "dupont_analysis": {
+    "polars": "(net_income / sales) * (sales / total_assets) * (total_assets / total_equity)",
+    "sheets": "=({net_income}/{sales}) * ({sales}/{total_assets}) * ({total_assets}/{total_equity})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "DuPont analysis for ROE decomposition"
+  },
+  "z_score": {
+    "polars": "1.2 * (working_capital / total_assets) + 1.4 * (retained_earnings / total_assets) + 3.3 * (ebit / total_assets) + 0.6 * (market_value_equity / total_liabilities) + 1.0 * (sales / total_assets)",
+    "sheets": "=1.2*({working_capital}/{total_assets}) + 1.4*({retained_earnings}/{total_assets}) + 3.3*({ebit}/{total_assets}) + 0.6*({market_value}/{total_liabilities}) + 1.0*({sales}/{total_assets})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "complex",
+    "description": "Altman Z-Score for bankruptcy prediction"
+  },
+  "price_elasticity": {
+    "polars": "(percent_change_quantity / percent_change_price)",
+    "sheets": "=((({new_quantity}-{old_quantity})/{old_quantity})*100) / ((({new_price}-{old_price})/{old_price})*100)",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Price elasticity of demand"
+  },
+  "market_share": {
+    "polars": "company_sales / total_market_sales * 100",
+    "sheets": "={company_sales} / SUM({market_sales_range}) * 100",
+    "validation": "tolerance_0.01",
+    "complexity_level": "simple",
+    "description": "Market share percentage"
+  },
+  "customer_concentration": {
+    "polars": "df.group_by('customer').agg(pl.col('revenue').sum()).with_columns((pl.col('revenue') / pl.col('revenue').sum() * 100).alias('concentration'))",
+    "sheets": "=SUMIF({customer_range}, {customer_name}, {revenue_range}) / SUM({revenue_range}) * 100",
+    "validation": "tolerance_0.01",
+    "complexity_level": "moderate",
+    "description": "Customer concentration risk analysis"
+  },
+  "activity_based_costing": {
+    "polars": "df.group_by('product').agg((pl.col('activity_cost') * pl.col('activity_driver')).sum().alias('abc_cost'))",
+    "sheets": "=SUMPRODUCT(({activity_cost_range}={product_filter}) * {activity_cost_range} * {driver_range})",
+    "validation": "tolerance_0.01",
+    "complexity_level": "complex",
+    "helper_columns": ["product_filter", "activity_allocation"],
+    "description": "Activity-Based Costing allocation"
+  }
+}
