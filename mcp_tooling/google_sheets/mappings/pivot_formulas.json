@@ -1,0 +1,247 @@
+{
+  "pivot_table_functions": {
+    "pivot_basic": {
+      "sheets_function": "PIVOT",
+      "description": "Create pivot table from data range",
+      "syntax": "PIVOT(data_range, rows, columns, values, aggregation)",
+      "polars_mapping": "df.group_by(rows + columns).agg(aggregation)",
+      "examples": {
+        "basic": "Pivot table with Product as rows, Month as columns, summing Sales",
+        "multiple_values": "Pivot with multiple value fields and different aggregations"
+      },
+      "parameters": {
+        "data_range": {
+          "type": "range",
+          "required": true,
+          "description": "Source data range including headers"
+        },
+        "rows": {
+          "type": "array",
+          "required": true,
+          "description": "Column names/indices for row grouping"
+        },
+        "columns": {
+          "type": "array",
+          "required": false,
+          "description": "Column names/indices for column grouping"
+        },
+        "values": {
+          "type": "array",
+          "required": true,
+          "description": "Column names/indices for value aggregation"
+        },
+        "aggregation": {
+          "type": "string",
+          "required": false,
+          "description": "Aggregation function (SUM, COUNT, AVERAGE, etc.)"
+        }
+      }
+    },
+    "query_with_pivot": {
+      "sheets_function": "QUERY",
+      "description": "SQL-like queries with pivot operations",
+      "syntax": "QUERY(data, \"SELECT ... GROUP BY ... PIVOT ...\")",
+      "polars_mapping": "df.group_by().agg().pivot()",
+      "examples": {
+        "basic_pivot": "QUERY(A1:D100, \"SELECT A, SUM(D) GROUP BY A PIVOT B\")",
+        "with_conditions": "QUERY(A1:D100, \"SELECT A, SUM(D) WHERE C > 0 GROUP BY A PIVOT B\")"
+      },
+      "parameters": {
+        "data": {
+          "type": "range",
+          "required": true,
+          "description": "Data range to query"
+        },
+        "query_string": {
+          "type": "string",
+          "required": true,
+          "description": "SQL-like query string"
+        }
+      }
+    }
+  },
+  "aggregation_functions": {
+    "group_by_sum": {
+      "sheets_function": "SUMIF/SUMIFS",
+      "description": "Sum values based on criteria (pivot-like aggregation)",
+      "syntax": "SUMIFS(sum_range, criteria_range1, criteria1, ...)",
+      "polars_mapping": "df.group_by('criteria_col').agg(pl.col('sum_col').sum())",
+      "examples": {
+        "single_criteria": "SUMIF(A:A, \"Product1\", B:B)",
+        "multiple_criteria": "SUMIFS(C:C, A:A, \"Product1\", B:B, \">100\")"
+      },
+      "parameters": {
+        "sum_range": {
+          "type": "range",
+          "required": true,
+          "description": "Range containing values to sum"
+        },
+        "criteria_range": {
+          "type": "range",
+          "required": true,
+          "description": "Range containing criteria values"
+        },
+        "criteria": {
+          "type": "string",
+          "required": true,
+          "description": "Criteria to match"
+        }
+      }
+    },
+    "group_by_count": {
+      "sheets_function": "COUNTIF/COUNTIFS",
+      "description": "Count values based on criteria",
+      "syntax": "COUNTIFS(criteria_range1, criteria1, ...)",
+      "polars_mapping": "df.group_by('criteria_col').agg(pl.count())",
+      "examples": {
+        "single_criteria": "COUNTIF(A:A, \"Product1\")",
+        "multiple_criteria": "COUNTIFS(A:A, \"Product1\", B:B, \">100\")"
+      },
+      "parameters": {
+        "criteria_range": {
+          "type": "range",
+          "required": true,
+          "description": "Range containing criteria values"
+        },
+        "criteria": {
+          "type": "string",
+          "required": true,
+          "description": "Criteria to match"
+        }
+      }
+    },
+    "group_by_average": {
+      "sheets_function": "AVERAGEIF/AVERAGEIFS",
+      "description": "Average values based on criteria",
+      "syntax": "AVERAGEIFS(average_range, criteria_range1, criteria1, ...)",
+      "polars_mapping": "df.group_by('criteria_col').agg(pl.col('avg_col').mean())",
+      "examples": {
+        "single_criteria": "AVERAGEIF(A:A, \"Product1\", B:B)",
+        "multiple_criteria": "AVERAGEIFS(C:C, A:A, \"Product1\", B:B, \">100\")"
+      },
+      "parameters": {
+        "average_range": {
+          "type": "range",
+          "required": true,
+          "description": "Range containing values to average"
+        },
+        "criteria_range": {
+          "type": "range",
+          "required": true,
+          "description": "Range containing criteria values"
+        },
+        "criteria": {
+          "type": "string",
+          "required": true,
+          "description": "Criteria to match"
+        }
+      }
+    }
+  },
+  "cross_tabulation": {
+    "pivot_cross_tab": {
+      "description": "Cross-tabulation using pivot table structure",
+      "polars_mapping": "df.pivot(values='value_col', index='row_col', columns='col_col', aggregate_function='sum')",
+      "examples": {
+        "sales_by_product_month": {
+          "description": "Products as rows, months as columns, sum of sales",
+          "sheets_equivalent": "Pivot table with Product field in Rows, Month in Columns, Sales in Values",
+          "polars_code": "df.pivot(values='Sales', index='Product', columns='Month', aggregate_function='sum')"
+        },
+        "count_by_category": {
+          "description": "Count occurrences by two dimensions",
+          "sheets_equivalent": "Pivot table with Category in Rows, Type in Columns, Count in Values",
+          "polars_code": "df.pivot(values='ID', index='Category', columns='Type', aggregate_function='count')"
+        }
+      }
+    },
+    "dynamic_pivot": {
+      "description": "Pivot tables that adjust automatically when source data changes",
+      "sheets_equivalent": "Pivot table with dynamic ranges using INDIRECT or structured references",
+      "polars_mapping": "Rebuild pivot when data changes using lazy evaluation",
+      "implementation": {
+        "data_dependency": "Monitor source data range for changes",
+        "auto_refresh": "Recalculate pivot when dependencies change",
+        "range_expansion": "Automatically include new data rows/columns"
+      }
+    }
+  },
+  "pivot_calculations": {
+    "percent_of_total": {
+      "sheets_function": "Calculated Field in Pivot",
+      "description": "Show values as percentage of grand total",
+      "polars_mapping": "pl.col('value') / pl.col('value').sum() * 100",
+      "examples": {
+        "row_percent": "Each value as percent of row total",
+        "column_percent": "Each value as percent of column total",
+        "grand_percent": "Each value as percent of grand total"
+      }
+    },
+    "running_total": {
+      "sheets_function": "Calculated Field with Running Sum",
+      "description": "Running total within pivot table",
+      "polars_mapping": "pl.col('value').cumsum()",
+      "examples": {
+        "running_sum": "Cumulative sum by date/period",
+        "running_average": "Running average over time"
+      }
+    },
+    "rank_in_pivot": {
+      "sheets_function": "RANK function in calculated field",
+      "description": "Rank values within pivot context",
+      "polars_mapping": "pl.col('value').rank(method='dense')",
+      "examples": {
+        "rank_by_sales": "Rank products by sales within each region",
+        "percentile_rank": "Percentile ranking within categories"
+      }
+    }
+  },
+  "pivot_filtering": {
+    "report_filter": {
+      "description": "Page/Report filters in pivot tables",
+      "sheets_equivalent": "Filter fields in pivot table",
+      "polars_mapping": "df.filter(condition).pivot(...)",
+      "examples": {
+        "date_filter": "Filter to specific date range before pivoting",
+        "category_filter": "Show only specific categories in pivot"
+      }
+    },
+    "value_filters": {
+      "description": "Filter pivot results based on aggregated values",
+      "sheets_equivalent": "Value filters in pivot table (Top 10, Greater than, etc.)",
+      "polars_mapping": "Post-pivot filtering on aggregated results",
+      "examples": {
+        "top_n": "Show only top N items by value",
+        "above_threshold": "Show only values above certain threshold"
+      }
+    }
+  },
+  "advanced_pivot": {
+    "multiple_aggregations": {
+      "description": "Multiple aggregation functions in single pivot",
+      "polars_mapping": "df.group_by(grouping_cols).agg([pl.col('val').sum(), pl.col('val').mean(), pl.col('val').count()])",
+      "examples": {
+        "sum_and_average": "Show both sum and average in same pivot",
+        "count_and_percent": "Count with percentage calculations"
+      }
+    },
+    "calculated_pivot_fields": {
+      "description": "Calculated fields within pivot table context",
+      "sheets_equivalent": "Calculated fields and items in pivot tables",
+      "polars_mapping": "Add calculated columns before or after pivot operation",
+      "examples": {
+        "profit_margin": "Calculate profit margin = (Revenue - Cost) / Revenue",
+        "growth_rate": "Period-over-period growth calculations"
+      }
+    },
+    "pivot_formatting": {
+      "description": "Conditional formatting and styling in pivot tables",
+      "implementation": "Apply formatting rules to pivot results",
+      "examples": {
+        "conditional_colors": "Color-code values based on performance",
+        "data_bars": "Add data bars to show relative values",
+        "number_formatting": "Format numbers as currency, percentages, etc."
+      }
+    }
+  }
+}

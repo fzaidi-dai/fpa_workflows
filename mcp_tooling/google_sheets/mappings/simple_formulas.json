@@ -1,0 +1,281 @@
+{
+  "simple_math": {
+    "sum": {
+      "sheets_function": "SUM",
+      "description": "Sum of values in a range",
+      "syntax": "SUM(range)",
+      "polars_mapping": "pl.col().sum()",
+      "examples": {
+        "basic": "SUM(A1:A10)",
+        "multiple_ranges": "SUM(A1:A10, C1:C10)",
+        "with_conditions": "SUMIF(A1:A10, \">0\", B1:B10)"
+      },
+      "parameters": {
+        "range": {
+          "type": "string",
+          "required": true,
+          "description": "Cell range in A1 notation"
+        },
+        "criteria": {
+          "type": "string", 
+          "required": false,
+          "description": "Condition for SUMIF/SUMIFS"
+        }
+      }
+    },
+    "average": {
+      "sheets_function": "AVERAGE",
+      "description": "Average of values in a range",
+      "syntax": "AVERAGE(range)",
+      "polars_mapping": "pl.col().mean()",
+      "examples": {
+        "basic": "AVERAGE(A1:A10)",
+        "multiple_ranges": "AVERAGE(A1:A10, C1:C10)",
+        "with_conditions": "AVERAGEIF(A1:A10, \">0\", B1:B10)"
+      },
+      "parameters": {
+        "range": {
+          "type": "string",
+          "required": true,
+          "description": "Cell range in A1 notation"
+        }
+      }
+    },
+    "count": {
+      "sheets_function": "COUNT",
+      "description": "Count of numeric values in a range",
+      "syntax": "COUNT(range)",
+      "polars_mapping": "pl.col().count()",
+      "examples": {
+        "basic": "COUNT(A1:A10)",
+        "counta": "COUNTA(A1:A10)",
+        "countif": "COUNTIF(A1:A10, \">0\")"
+      },
+      "parameters": {
+        "range": {
+          "type": "string",
+          "required": true,
+          "description": "Cell range in A1 notation"
+        }
+      }
+    },
+    "max": {
+      "sheets_function": "MAX",
+      "description": "Maximum value in a range",
+      "syntax": "MAX(range)",
+      "polars_mapping": "pl.col().max()",
+      "examples": {
+        "basic": "MAX(A1:A10)",
+        "multiple_ranges": "MAX(A1:A10, C1:C10)"
+      },
+      "parameters": {
+        "range": {
+          "type": "string",
+          "required": true,
+          "description": "Cell range in A1 notation"
+        }
+      }
+    },
+    "min": {
+      "sheets_function": "MIN",
+      "description": "Minimum value in a range",
+      "syntax": "MIN(range)",
+      "polars_mapping": "pl.col().min()",
+      "examples": {
+        "basic": "MIN(A1:A10)",
+        "multiple_ranges": "MIN(A1:A10, C1:C10)"
+      },
+      "parameters": {
+        "range": {
+          "type": "string",
+          "required": true,
+          "description": "Cell range in A1 notation"
+        }
+      }
+    },
+    "round": {
+      "sheets_function": "ROUND",
+      "description": "Round a number to specified decimal places",
+      "syntax": "ROUND(value, digits)",
+      "polars_mapping": "pl.col().round(digits)",
+      "examples": {
+        "basic": "ROUND(A1, 2)",
+        "roundup": "ROUNDUP(A1, 2)",
+        "rounddown": "ROUNDDOWN(A1, 2)"
+      },
+      "parameters": {
+        "value": {
+          "type": "number",
+          "required": true,
+          "description": "Number to round"
+        },
+        "digits": {
+          "type": "integer",
+          "required": true,
+          "description": "Number of decimal places"
+        }
+      }
+    }
+  },
+  "text_functions": {
+    "concatenate": {
+      "sheets_function": "CONCATENATE",
+      "description": "Join text strings together",
+      "syntax": "CONCATENATE(text1, text2, ...)",
+      "polars_mapping": "pl.concat_str([pl.col(col) for col in columns])",
+      "examples": {
+        "basic": "CONCATENATE(A1, B1)",
+        "with_separator": "CONCATENATE(A1, \" \", B1)",
+        "textjoin": "TEXTJOIN(\", \", TRUE, A1:A5)"
+      },
+      "parameters": {
+        "text": {
+          "type": "string",
+          "required": true,
+          "description": "Text values to concatenate"
+        }
+      }
+    },
+    "len": {
+      "sheets_function": "LEN",
+      "description": "Length of text string",
+      "syntax": "LEN(text)",
+      "polars_mapping": "pl.col().str.len_chars()",
+      "examples": {
+        "basic": "LEN(A1)"
+      },
+      "parameters": {
+        "text": {
+          "type": "string",
+          "required": true,
+          "description": "Text string to measure"
+        }
+      }
+    },
+    "upper": {
+      "sheets_function": "UPPER",
+      "description": "Convert text to uppercase",
+      "syntax": "UPPER(text)",
+      "polars_mapping": "pl.col().str.to_uppercase()",
+      "examples": {
+        "basic": "UPPER(A1)"
+      },
+      "parameters": {
+        "text": {
+          "type": "string",
+          "required": true,
+          "description": "Text to convert"
+        }
+      }
+    },
+    "lower": {
+      "sheets_function": "LOWER",
+      "description": "Convert text to lowercase",
+      "syntax": "LOWER(text)",
+      "polars_mapping": "pl.col().str.to_lowercase()",
+      "examples": {
+        "basic": "LOWER(A1)"
+      },
+      "parameters": {
+        "text": {
+          "type": "string",
+          "required": true,
+          "description": "Text to convert"
+        }
+      }
+    },
+    "trim": {
+      "sheets_function": "TRIM",
+      "description": "Remove leading and trailing spaces",
+      "syntax": "TRIM(text)",
+      "polars_mapping": "pl.col().str.strip_chars()",
+      "examples": {
+        "basic": "TRIM(A1)"
+      },
+      "parameters": {
+        "text": {
+          "type": "string",
+          "required": true,
+          "description": "Text to trim"
+        }
+      }
+    }
+  },
+  "logical_functions": {
+    "if": {
+      "sheets_function": "IF",
+      "description": "Return different values based on condition",
+      "syntax": "IF(condition, value_if_true, value_if_false)",
+      "polars_mapping": "pl.when(condition).then(value_if_true).otherwise(value_if_false)",
+      "examples": {
+        "basic": "IF(A1>0, \"Positive\", \"Not Positive\")",
+        "nested": "IF(A1>0, \"Positive\", IF(A1<0, \"Negative\", \"Zero\"))"
+      },
+      "parameters": {
+        "condition": {
+          "type": "boolean",
+          "required": true,
+          "description": "Logical test"
+        },
+        "value_if_true": {
+          "type": "any",
+          "required": true,
+          "description": "Value when condition is true"
+        },
+        "value_if_false": {
+          "type": "any",
+          "required": true,
+          "description": "Value when condition is false"
+        }
+      }
+    },
+    "and": {
+      "sheets_function": "AND",
+      "description": "Logical AND of multiple conditions",
+      "syntax": "AND(condition1, condition2, ...)",
+      "polars_mapping": "condition1 & condition2",
+      "examples": {
+        "basic": "AND(A1>0, B1>0)"
+      },
+      "parameters": {
+        "conditions": {
+          "type": "boolean",
+          "required": true,
+          "description": "Logical conditions to evaluate"
+        }
+      }
+    },
+    "or": {
+      "sheets_function": "OR",
+      "description": "Logical OR of multiple conditions",
+      "syntax": "OR(condition1, condition2, ...)",
+      "polars_mapping": "condition1 | condition2",
+      "examples": {
+        "basic": "OR(A1>0, B1>0)"
+      },
+      "parameters": {
+        "conditions": {
+          "type": "boolean",
+          "required": true,
+          "description": "Logical conditions to evaluate"
+        }
+      }
+    },
+    "not": {
+      "sheets_function": "NOT",
+      "description": "Logical NOT of a condition",
+      "syntax": "NOT(condition)",
+      "polars_mapping": "~condition",
+      "examples": {
+        "basic": "NOT(A1>0)"
+      },
+      "parameters": {
+        "condition": {
+          "type": "boolean",
+          "required": true,
+          "description": "Logical condition to negate"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,634 @@
+{
+  "time_value_of_money": {
+    "npv": {
+      "sheets_function": "NPV",
+      "description": "Net Present Value calculation",
+      "syntax": "NPV(rate, value1, value2, ...)",
+      "polars_mapping": "Custom NPV calculation using discount factors",
+      "examples": {
+        "basic": "NPV(0.1, -1000, 300, 400, 300, 200)",
+        "with_range": "NPV(0.1, A1:A5)"
+      },
+      "parameters": {
+        "rate": {
+          "type": "number",
+          "required": true,
+          "description": "Discount rate per period"
+        },
+        "values": {
+          "type": "array",
+          "required": true,
+          "description": "Cash flow values (first is often initial investment)"
+        }
+      },
+      "formula_pattern": "=NPV({rate}, {cash_flows})",
+      "polars_implementation": "sum(cash_flow / (1 + rate)**period for period, cash_flow in enumerate(cash_flows))"
+    },
+    "pv": {
+      "sheets_function": "PV",
+      "description": "Present Value of annuity",
+      "syntax": "PV(rate, nper, pmt, fv, type)",
+      "polars_mapping": "Present value calculation",
+      "examples": {
+        "annuity": "PV(0.05, 20, -1000, 0, 0)",
+        "with_future_value": "PV(0.05, 20, -1000, 10000, 1)"
+      },
+      "parameters": {
+        "rate": {
+          "type": "number",
+          "required": true,
+          "description": "Interest rate per period"
+        },
+        "nper": {
+          "type": "number",
+          "required": true,
+          "description": "Number of periods"
+        },
+        "pmt": {
+          "type": "number",
+          "required": true,
+          "description": "Payment per period"
+        },
+        "fv": {
+          "type": "number",
+          "required": false,
+          "description": "Future value (default 0)"
+        },
+        "type": {
+          "type": "integer",
+          "required": false,
+          "description": "Payment timing (0=end, 1=beginning)"
+        }
+      },
+      "formula_pattern": "=PV({rate}, {nper}, {pmt}, {fv}, {type})"
+    },
+    "fv": {
+      "sheets_function": "FV",
+      "description": "Future Value calculation",
+      "syntax": "FV(rate, nper, pmt, pv, type)",
+      "polars_mapping": "Future value calculation",
+      "examples": {
+        "investment": "FV(0.05, 20, -1000, -10000, 0)",
+        "savings": "FV(0.03, 12, -100, 0, 1)"
+      },
+      "parameters": {
+        "rate": {
+          "type": "number",
+          "required": true,
+          "description": "Interest rate per period"
+        },
+        "nper": {
+          "type": "number",
+          "required": true,
+          "description": "Number of periods"
+        },
+        "pmt": {
+          "type": "number",
+          "required": true,
+          "description": "Payment per period"
+        },
+        "pv": {
+          "type": "number",
+          "required": false,
+          "description": "Present value (default 0)"
+        },
+        "type": {
+          "type": "integer",
+          "required": false,
+          "description": "Payment timing (0=end, 1=beginning)"
+        }
+      },
+      "formula_pattern": "=FV({rate}, {nper}, {pmt}, {pv}, {type})"
+    },
+    "pmt": {
+      "sheets_function": "PMT",
+      "description": "Payment calculation for loan/annuity",
+      "syntax": "PMT(rate, nper, pv, fv, type)",
+      "polars_mapping": "Payment calculation",
+      "examples": {
+        "loan_payment": "PMT(0.05/12, 360, 200000, 0, 0)",
+        "savings_goal": "PMT(0.06/12, 120, 0, 50000, 1)"
+      },
+      "parameters": {
+        "rate": {
+          "type": "number",
+          "required": true,
+          "description": "Interest rate per period"
+        },
+        "nper": {
+          "type": "number",
+          "required": true,
+          "description": "Number of periods"
+        },
+        "pv": {
+          "type": "number",
+          "required": true,
+          "description": "Present value (loan amount)"
+        },
+        "fv": {
+          "type": "number",
+          "required": false,
+          "description": "Future value (default 0)"
+        },
+        "type": {
+          "type": "integer",
+          "required": false,
+          "description": "Payment timing (0=end, 1=beginning)"
+        }
+      },
+      "formula_pattern": "=PMT({rate}, {nper}, {pv}, {fv}, {type})"
+    },
+    "rate": {
+      "sheets_function": "RATE",
+      "description": "Interest rate calculation",
+      "syntax": "RATE(nper, pmt, pv, fv, type, guess)",
+      "polars_mapping": "Iterative rate calculation",
+      "examples": {
+        "loan_rate": "RATE(360, -1500, 200000, 0, 0)",
+        "investment_return": "RATE(20, 0, -10000, 50000, 0)"
+      },
+      "parameters": {
+        "nper": {
+          "type": "number",
+          "required": true,
+          "description": "Number of periods"
+        },
+        "pmt": {
+          "type": "number",
+          "required": true,
+          "description": "Payment per period"
+        },
+        "pv": {
+          "type": "number",
+          "required": true,
+          "description": "Present value"
+        },
+        "fv": {
+          "type": "number",
+          "required": false,
+          "description": "Future value (default 0)"
+        },
+        "type": {
+          "type": "integer",
+          "required": false,
+          "description": "Payment timing (0=end, 1=beginning)"
+        },
+        "guess": {
+          "type": "number",
+          "required": false,
+          "description": "Initial guess for rate"
+        }
+      },
+      "formula_pattern": "=RATE({nper}, {pmt}, {pv}, {fv}, {type}, {guess})"
+    },
+    "nper": {
+      "sheets_function": "NPER",
+      "description": "Number of periods calculation",
+      "syntax": "NPER(rate, pmt, pv, fv, type)",
+      "polars_mapping": "Period calculation using logarithms",
+      "examples": {
+        "loan_term": "NPER(0.05/12, -1500, 200000, 0, 0)",
+        "savings_time": "NPER(0.06/12, -500, 0, 50000, 1)"
+      },
+      "parameters": {
+        "rate": {
+          "type": "number",
+          "required": true,
+          "description": "Interest rate per period"
+        },
+        "pmt": {
+          "type": "number",
+          "required": true,
+          "description": "Payment per period"
+        },
+        "pv": {
+          "type": "number",
+          "required": true,
+          "description": "Present value"
+        },
+        "fv": {
+          "type": "number",
+          "required": false,
+          "description": "Future value (default 0)"
+        },
+        "type": {
+          "type": "integer",
+          "required": false,
+          "description": "Payment timing (0=end, 1=beginning)"
+        }
+      },
+      "formula_pattern": "=NPER({rate}, {pmt}, {pv}, {fv}, {type})"
+    }
+  },
+  "loan_analysis": {
+    "ipmt": {
+      "sheets_function": "IPMT",
+      "description": "Interest payment for specific period",
+      "syntax": "IPMT(rate, per, nper, pv, fv, type)",
+      "polars_mapping": "Interest portion of payment calculation",
+      "examples": {
+        "monthly_interest": "IPMT(0.05/12, 1, 360, 200000, 0, 0)",
+        "year_interest": "SUMPRODUCT(IPMT(0.05/12, ROW(1:12), 360, 200000, 0, 0))"
+      },
+      "parameters": {
+        "rate": {
+          "type": "number",
+          "required": true,
+          "description": "Interest rate per period"
+        },
+        "per": {
+          "type": "number",
+          "required": true,
+          "description": "Period number (1 to nper)"
+        },
+        "nper": {
+          "type": "number",
+          "required": true,
+          "description": "Total number of periods"
+        },
+        "pv": {
+          "type": "number",
+          "required": true,
+          "description": "Present value (loan amount)"
+        },
+        "fv": {
+          "type": "number",
+          "required": false,
+          "description": "Future value (default 0)"
+        },
+        "type": {
+          "type": "integer",
+          "required": false,
+          "description": "Payment timing (0=end, 1=beginning)"
+        }
+      },
+      "formula_pattern": "=IPMT({rate}, {per}, {nper}, {pv}, {fv}, {type})"
+    },
+    "ppmt": {
+      "sheets_function": "PPMT",
+      "description": "Principal payment for specific period",
+      "syntax": "PPMT(rate, per, nper, pv, fv, type)",
+      "polars_mapping": "Principal portion of payment calculation",
+      "examples": {
+        "monthly_principal": "PPMT(0.05/12, 1, 360, 200000, 0, 0)",
+        "cumulative_principal": "CUMPRINC(0.05/12, 360, 200000, 1, 12, 0)"
+      },
+      "parameters": {
+        "rate": {
+          "type": "number",
+          "required": true,
+          "description": "Interest rate per period"
+        },
+        "per": {
+          "type": "number",
+          "required": true,
+          "description": "Period number (1 to nper)"
+        },
+        "nper": {
+          "type": "number",
+          "required": true,
+          "description": "Total number of periods"
+        },
+        "pv": {
+          "type": "number",
+          "required": true,
+          "description": "Present value (loan amount)"
+        },
+        "fv": {
+          "type": "number",
+          "required": false,
+          "description": "Future value (default 0)"
+        },
+        "type": {
+          "type": "integer",
+          "required": false,
+          "description": "Payment timing (0=end, 1=beginning)"
+        }
+      },
+      "formula_pattern": "=PPMT({rate}, {per}, {nper}, {pv}, {fv}, {type})"
+    },
+    "cumipmt": {
+      "sheets_function": "CUMIPMT",
+      "description": "Cumulative interest paid between periods",
+      "syntax": "CUMIPMT(rate, nper, pv, start_period, end_period, type)",
+      "polars_mapping": "Sum of interest payments over period range",
+      "examples": {
+        "first_year_interest": "CUMIPMT(0.05/12, 360, 200000, 1, 12, 0)",
+        "total_interest": "CUMIPMT(0.05/12, 360, 200000, 1, 360, 0)"
+      },
+      "parameters": {
+        "rate": {
+          "type": "number",
+          "required": true,
+          "description": "Interest rate per period"
+        },
+        "nper": {
+          "type": "number",
+          "required": true,
+          "description": "Total number of periods"
+        },
+        "pv": {
+          "type": "number",
+          "required": true,
+          "description": "Present value (loan amount)"
+        },
+        "start_period": {
+          "type": "number",
+          "required": true,
+          "description": "First period in range"
+        },
+        "end_period": {
+          "type": "number",
+          "required": true,
+          "description": "Last period in range"
+        },
+        "type": {
+          "type": "integer",
+          "required": false,
+          "description": "Payment timing (0=end, 1=beginning)"
+        }
+      },
+      "formula_pattern": "=CUMIPMT({rate}, {nper}, {pv}, {start_period}, {end_period}, {type})"
+    },
+    "cumprinc": {
+      "sheets_function": "CUMPRINC",
+      "description": "Cumulative principal paid between periods",
+      "syntax": "CUMPRINC(rate, nper, pv, start_period, end_period, type)",
+      "polars_mapping": "Sum of principal payments over period range",
+      "examples": {
+        "first_year_principal": "CUMPRINC(0.05/12, 360, 200000, 1, 12, 0)",
+        "remaining_balance": "PV + CUMPRINC(rate, nper, pv, 1, current_period, type)"
+      },
+      "parameters": {
+        "rate": {
+          "type": "number",
+          "required": true,
+          "description": "Interest rate per period"
+        },
+        "nper": {
+          "type": "number",
+          "required": true,
+          "description": "Total number of periods"
+        },
+        "pv": {
+          "type": "number",
+          "required": true,
+          "description": "Present value (loan amount)"
+        },
+        "start_period": {
+          "type": "number",
+          "required": true,
+          "description": "First period in range"
+        },
+        "end_period": {
+          "type": "number",
+          "required": true,
+          "description": "Last period in range"
+        },
+        "type": {
+          "type": "integer",
+          "required": false,
+          "description": "Payment timing (0=end, 1=beginning)"
+        }
+      },
+      "formula_pattern": "=CUMPRINC({rate}, {nper}, {pv}, {start_period}, {end_period}, {type})"
+    }
+  },
+  "investment_analysis": {
+    "irr": {
+      "sheets_function": "IRR",
+      "description": "Internal Rate of Return",
+      "syntax": "IRR(values, guess)",
+      "polars_mapping": "Iterative calculation to find IRR",
+      "examples": {
+        "basic_irr": "IRR({-1000, 300, 400, 300, 200})",
+        "with_guess": "IRR(A1:A5, 0.1)"
+      },
+      "parameters": {
+        "values": {
+          "type": "array",
+          "required": true,
+          "description": "Cash flow values (must include negative and positive)"
+        },
+        "guess": {
+          "type": "number",
+          "required": false,
+          "description": "Initial guess for IRR (default 0.1)"
+        }
+      },
+      "formula_pattern": "=IRR({cash_flows}, {guess})",
+      "polars_implementation": "Iterative solver to find rate where NPV = 0"
+    },
+    "xirr": {
+      "sheets_function": "XIRR",
+      "description": "Internal Rate of Return for irregular cash flows",
+      "syntax": "XIRR(values, dates, guess)",
+      "polars_mapping": "IRR calculation with actual dates",
+      "examples": {
+        "irregular_flows": "XIRR(B1:B5, A1:A5, 0.1)"
+      },
+      "parameters": {
+        "values": {
+          "type": "array",
+          "required": true,
+          "description": "Cash flow values"
+        },
+        "dates": {
+          "type": "array",
+          "required": true,
+          "description": "Dates corresponding to cash flows"
+        },
+        "guess": {
+          "type": "number",
+          "required": false,
+          "description": "Initial guess for IRR"
+        }
+      },
+      "formula_pattern": "=XIRR({cash_flows}, {dates}, {guess})"
+    },
+    "mirr": {
+      "sheets_function": "MIRR",
+      "description": "Modified Internal Rate of Return",
+      "syntax": "MIRR(values, finance_rate, reinvest_rate)",
+      "polars_mapping": "MIRR calculation with different rates",
+      "examples": {
+        "basic_mirr": "MIRR(A1:A5, 0.1, 0.12)"
+      },
+      "parameters": {
+        "values": {
+          "type": "array",
+          "required": true,
+          "description": "Cash flow values"
+        },
+        "finance_rate": {
+          "type": "number",
+          "required": true,
+          "description": "Rate for financing negative cash flows"
+        },
+        "reinvest_rate": {
+          "type": "number",
+          "required": true,
+          "description": "Rate for reinvesting positive cash flows"
+        }
+      },
+      "formula_pattern": "=MIRR({cash_flows}, {finance_rate}, {reinvest_rate})"
+    }
+  },
+  "depreciation": {
+    "sln": {
+      "sheets_function": "SLN",
+      "description": "Straight-line depreciation",
+      "syntax": "SLN(cost, salvage, life)",
+      "polars_mapping": "(cost - salvage) / life",
+      "examples": {
+        "equipment": "SLN(50000, 5000, 10)"
+      },
+      "parameters": {
+        "cost": {
+          "type": "number",
+          "required": true,
+          "description": "Initial cost of asset"
+        },
+        "salvage": {
+          "type": "number",
+          "required": true,
+          "description": "Salvage value at end of life"
+        },
+        "life": {
+          "type": "number",
+          "required": true,
+          "description": "Useful life in periods"
+        }
+      },
+      "formula_pattern": "=SLN({cost}, {salvage}, {life})"
+    },
+    "db": {
+      "sheets_function": "DB",
+      "description": "Declining balance depreciation",
+      "syntax": "DB(cost, salvage, life, period, month)",
+      "polars_mapping": "Declining balance calculation",
+      "examples": {
+        "equipment_db": "DB(50000, 5000, 10, 1, 12)"
+      },
+      "parameters": {
+        "cost": {
+          "type": "number",
+          "required": true,
+          "description": "Initial cost of asset"
+        },
+        "salvage": {
+          "type": "number",
+          "required": true,
+          "description": "Salvage value at end of life"
+        },
+        "life": {
+          "type": "number",
+          "required": true,
+          "description": "Useful life in periods"
+        },
+        "period": {
+          "type": "number",
+          "required": true,
+          "description": "Period for which to calculate depreciation"
+        },
+        "month": {
+          "type": "number",
+          "required": false,
+          "description": "Months in first year (default 12)"
+        }
+      },
+      "formula_pattern": "=DB({cost}, {salvage}, {life}, {period}, {month})"
+    },
+    "ddb": {
+      "sheets_function": "DDB",
+      "description": "Double-declining balance depreciation",
+      "syntax": "DDB(cost, salvage, life, period, factor)",
+      "polars_mapping": "Double declining balance calculation",
+      "examples": {
+        "equipment_ddb": "DDB(50000, 5000, 10, 1, 2)"
+      },
+      "parameters": {
+        "cost": {
+          "type": "number",
+          "required": true,
+          "description": "Initial cost of asset"
+        },
+        "salvage": {
+          "type": "number",
+          "required": true,
+          "description": "Salvage value at end of life"
+        },
+        "life": {
+          "type": "number",
+          "required": true,
+          "description": "Useful life in periods"
+        },
+        "period": {
+          "type": "number",
+          "required": true,
+          "description": "Period for which to calculate depreciation"
+        },
+        "factor": {
+          "type": "number",
+          "required": false,
+          "description": "Decline rate factor (default 2)"
+        }
+      },
+      "formula_pattern": "=DDB({cost}, {salvage}, {life}, {period}, {factor})"
+    },
+    "syd": {
+      "sheets_function": "SYD",
+      "description": "Sum-of-years digits depreciation",
+      "syntax": "SYD(cost, salvage, life, period)",
+      "polars_mapping": "Sum of years digits calculation",
+      "examples": {
+        "equipment_syd": "SYD(50000, 5000, 10, 1)"
+      },
+      "parameters": {
+        "cost": {
+          "type": "number",
+          "required": true,
+          "description": "Initial cost of asset"
+        },
+        "salvage": {
+          "type": "number",
+          "required": true,
+          "description": "Salvage value at end of life"
+        },
+        "life": {
+          "type": "number",
+          "required": true,
+          "description": "Useful life in periods"
+        },
+        "period": {
+          "type": "number",
+          "required": true,
+          "description": "Period for which to calculate depreciation"
+        }
+      },
+      "formula_pattern": "=SYD({cost}, {salvage}, {life}, {period})"
+    }
+  },
+  "financial_planning": {
+    "scenario_analysis": {
+      "description": "Financial modeling with multiple scenarios",
+      "polars_mapping": "Create scenarios as different columns or datasets",
+      "implementation": {
+        "base_case": "Primary financial projections",
+        "best_case": "Optimistic scenario parameters",
+        "worst_case": "Conservative scenario parameters",
+        "monte_carlo": "Random sampling of parameters"
+      }
+    },
+    "sensitivity_analysis": {
+      "description": "Impact analysis of parameter changes",
+      "sheets_equivalent": "Data tables and Goal Seek",
+      "polars_mapping": "Vary parameters and observe output changes",
+      "implementation": {
+        "single_variable": "Change one input, observe all outputs",
+        "two_variable": "Data table with two changing inputs",
+        "tornado_chart": "Rank variables by impact on output"
+      }
+    }
+  }
+}

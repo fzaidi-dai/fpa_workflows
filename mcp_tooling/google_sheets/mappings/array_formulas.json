@@ -1,0 +1,296 @@
+{
+  "array_operations": {
+    "arrayformula": {
+      "sheets_function": "ARRAYFORMULA",
+      "description": "Apply formula to entire array/range at once",
+      "syntax": "ARRAYFORMULA(formula)",
+      "polars_mapping": "Applied automatically to column operations",
+      "examples": {
+        "basic_math": "ARRAYFORMULA(A1:A10 * B1:B10)",
+        "text_operation": "ARRAYFORMULA(UPPER(A1:A10))",
+        "conditional": "ARRAYFORMULA(IF(A1:A10>0, A1:A10, 0))"
+      },
+      "parameters": {
+        "formula": {
+          "type": "string",
+          "required": true,
+          "description": "Formula to apply to array"
+        }
+      },
+      "array_context": true
+    },
+    "transpose": {
+      "sheets_function": "TRANSPOSE",
+      "description": "Transpose rows and columns of array",
+      "syntax": "TRANSPOSE(array)",
+      "polars_mapping": "df.transpose()",
+      "examples": {
+        "basic": "TRANSPOSE(A1:C3)"
+      },
+      "parameters": {
+        "array": {
+          "type": "range",
+          "required": true,
+          "description": "Array to transpose"
+        }
+      },
+      "array_context": true
+    },
+    "unique": {
+      "sheets_function": "UNIQUE",
+      "description": "Return unique values from array",
+      "syntax": "UNIQUE(range)",
+      "polars_mapping": "pl.col().unique()",
+      "examples": {
+        "basic": "UNIQUE(A1:A10)",
+        "by_columns": "UNIQUE(A1:C10, FALSE, FALSE)"
+      },
+      "parameters": {
+        "range": {
+          "type": "range",
+          "required": true,
+          "description": "Range to extract unique values from"
+        },
+        "by_column": {
+          "type": "boolean",
+          "required": false,
+          "description": "Whether to compare by columns"
+        }
+      },
+      "array_context": true
+    },
+    "sort": {
+      "sheets_function": "SORT",
+      "description": "Sort array by specified columns",
+      "syntax": "SORT(range, sort_column, is_ascending)",
+      "polars_mapping": "df.sort(column, descending=not is_ascending)",
+      "examples": {
+        "basic": "SORT(A1:C10, 1, TRUE)",
+        "multiple_columns": "SORT(A1:C10, {1,2}, {TRUE,FALSE})"
+      },
+      "parameters": {
+        "range": {
+          "type": "range",
+          "required": true,
+          "description": "Range to sort"
+        },
+        "sort_column": {
+          "type": "integer",
+          "required": true,
+          "description": "Column index to sort by"
+        },
+        "is_ascending": {
+          "type": "boolean",
+          "required": false,
+          "description": "Sort order (TRUE for ascending)"
+        }
+      },
+      "array_context": true
+    },
+    "filter": {
+      "sheets_function": "FILTER",
+      "description": "Filter array based on conditions",
+      "syntax": "FILTER(range, condition)",
+      "polars_mapping": "df.filter(condition)",
+      "examples": {
+        "basic": "FILTER(A1:C10, A1:A10>0)",
+        "multiple_conditions": "FILTER(A1:C10, (A1:A10>0)*(B1:B10<100))"
+      },
+      "parameters": {
+        "range": {
+          "type": "range",
+          "required": true,
+          "description": "Range to filter"
+        },
+        "condition": {
+          "type": "boolean_array",
+          "required": true,
+          "description": "Condition array for filtering"
+        }
+      },
+      "array_context": true
+    },
+    "sequence": {
+      "sheets_function": "SEQUENCE",
+      "description": "Generate sequence of numbers",
+      "syntax": "SEQUENCE(rows, columns, start, step)",
+      "polars_mapping": "pl.arange(start, start + rows*step, step)",
+      "examples": {
+        "basic": "SEQUENCE(10)",
+        "with_step": "SEQUENCE(10, 1, 1, 2)",
+        "matrix": "SEQUENCE(3, 4, 1, 1)"
+      },
+      "parameters": {
+        "rows": {
+          "type": "integer",
+          "required": true,
+          "description": "Number of rows"
+        },
+        "columns": {
+          "type": "integer",
+          "required": false,
+          "description": "Number of columns (default 1)"
+        },
+        "start": {
+          "type": "number",
+          "required": false,
+          "description": "Starting value (default 1)"
+        },
+        "step": {
+          "type": "number",
+          "required": false,
+          "description": "Step increment (default 1)"
+        }
+      },
+      "array_context": true
+    }
+  },
+  "element_wise_operations": {
+    "multiply_arrays": {
+      "sheets_function": "ARRAYFORMULA(*)",
+      "description": "Element-wise multiplication of arrays",
+      "syntax": "ARRAYFORMULA(array1 * array2)",
+      "polars_mapping": "pl.col('col1') * pl.col('col2')",
+      "examples": {
+        "basic": "ARRAYFORMULA(A1:A10 * B1:B10)",
+        "scalar": "ARRAYFORMULA(A1:A10 * 2)"
+      },
+      "parameters": {
+        "array1": {
+          "type": "range",
+          "required": true,
+          "description": "First array"
+        },
+        "array2": {
+          "type": "range_or_scalar",
+          "required": true,
+          "description": "Second array or scalar"
+        }
+      },
+      "array_context": true
+    },
+    "add_arrays": {
+      "sheets_function": "ARRAYFORMULA(+)",
+      "description": "Element-wise addition of arrays",
+      "syntax": "ARRAYFORMULA(array1 + array2)",
+      "polars_mapping": "pl.col('col1') + pl.col('col2')",
+      "examples": {
+        "basic": "ARRAYFORMULA(A1:A10 + B1:B10)",
+        "scalar": "ARRAYFORMULA(A1:A10 + 10)"
+      },
+      "parameters": {
+        "array1": {
+          "type": "range",
+          "required": true,
+          "description": "First array"
+        },
+        "array2": {
+          "type": "range_or_scalar",
+          "required": true,
+          "description": "Second array or scalar"
+        }
+      },
+      "array_context": true
+    },
+    "divide_arrays": {
+      "sheets_function": "ARRAYFORMULA(/)",
+      "description": "Element-wise division of arrays",
+      "syntax": "ARRAYFORMULA(array1 / array2)",
+      "polars_mapping": "pl.col('col1') / pl.col('col2')",
+      "examples": {
+        "basic": "ARRAYFORMULA(A1:A10 / B1:B10)",
+        "scalar": "ARRAYFORMULA(A1:A10 / 2)"
+      },
+      "parameters": {
+        "array1": {
+          "type": "range",
+          "required": true,
+          "description": "First array"
+        },
+        "array2": {
+          "type": "range_or_scalar",
+          "required": true,
+          "description": "Second array or scalar"
+        }
+      },
+      "array_context": true
+    },
+    "power_arrays": {
+      "sheets_function": "ARRAYFORMULA(^)",
+      "description": "Element-wise power of arrays",
+      "syntax": "ARRAYFORMULA(array1 ^ array2)",
+      "polars_mapping": "pl.col('col1') ** pl.col('col2')",
+      "examples": {
+        "basic": "ARRAYFORMULA(A1:A10 ^ 2)",
+        "variable_power": "ARRAYFORMULA(A1:A10 ^ B1:B10)"
+      },
+      "parameters": {
+        "array1": {
+          "type": "range",
+          "required": true,
+          "description": "Base array"
+        },
+        "array2": {
+          "type": "range_or_scalar",
+          "required": true,
+          "description": "Exponent array or scalar"
+        }
+      },
+      "array_context": true
+    }
+  },
+  "array_aggregations": {
+    "sumproduct": {
+      "sheets_function": "SUMPRODUCT",
+      "description": "Sum of products of corresponding array elements",
+      "syntax": "SUMPRODUCT(array1, array2, ...)",
+      "polars_mapping": "(pl.col('col1') * pl.col('col2')).sum()",
+      "examples": {
+        "basic": "SUMPRODUCT(A1:A10, B1:B10)",
+        "conditional": "SUMPRODUCT((A1:A10>0)*(B1:B10))"
+      },
+      "parameters": {
+        "arrays": {
+          "type": "range",
+          "required": true,
+          "description": "Arrays to multiply and sum"
+        }
+      },
+      "array_context": true
+    },
+    "mmult": {
+      "sheets_function": "MMULT",
+      "description": "Matrix multiplication",
+      "syntax": "MMULT(array1, array2)",
+      "polars_mapping": "Matrix multiplication using numpy",
+      "examples": {
+        "basic": "MMULT(A1:B3, D1:E2)"
+      },
+      "parameters": {
+        "array1": {
+          "type": "range",
+          "required": true,
+          "description": "First matrix"
+        },
+        "array2": {
+          "type": "range",
+          "required": true,
+          "description": "Second matrix"
+        }
+      },
+      "array_context": true
+    }
+  },
+  "dynamic_arrays": {
+    "spill_behavior": {
+      "description": "Dynamic array formulas that spill results into multiple cells",
+      "polars_equivalent": "DataFrame operations automatically handle multiple values",
+      "examples": {
+        "unique_spill": "=UNIQUE(A:A) spills unique values down",
+        "filter_spill": "=FILTER(A:C, A:A>10) spills filtered rows",
+        "sort_spill": "=SORT(A:C, 2) spills sorted data"
+      },
+      "handling": "Results automatically expand to accommodate all values"
+    }
+  }
+}

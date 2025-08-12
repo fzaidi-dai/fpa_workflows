@@ -1,0 +1,277 @@
+{
+  "lookup_chains": {
+    "vlookup_with_iferror": {
+      "description": "VLOOKUP with error handling",
+      "sheets_formula": "IFERROR(VLOOKUP(lookup_value, table_array, col_index, FALSE), \"Not Found\")",
+      "polars_equivalent": "df.join(lookup_table, on='key', how='left').fill_null('Not Found')",
+      "components": [
+        {
+          "function": "VLOOKUP",
+          "purpose": "Primary lookup operation",
+          "parameters": ["lookup_value", "table_array", "col_index", "exact_match"]
+        },
+        {
+          "function": "IFERROR", 
+          "purpose": "Handle lookup failures",
+          "parameters": ["formula", "error_value"]
+        }
+      ],
+      "use_cases": [
+        "Product price lookup with fallback",
+        "Customer name lookup with default",
+        "Category mapping with error handling"
+      ],
+      "complexity_level": "intermediate"
+    },
+    "index_match_chain": {
+      "description": "INDEX/MATCH for flexible lookups",
+      "sheets_formula": "INDEX(return_range, MATCH(lookup_value, lookup_range, 0))",
+      "polars_equivalent": "df.filter(pl.col('lookup_col') == lookup_value).select('return_col').item()",
+      "components": [
+        {
+          "function": "MATCH",
+          "purpose": "Find position of lookup value",
+          "parameters": ["lookup_value", "lookup_array", "match_type"]
+        },
+        {
+          "function": "INDEX",
+          "purpose": "Return value at found position",
+          "parameters": ["array", "row_num", "col_num"]
+        }
+      ],
+      "advantages": [
+        "Can lookup left of key column",
+        "More flexible than VLOOKUP",
+        "Better performance on large datasets"
+      ],
+      "complexity_level": "intermediate"
+    },
+    "multi_criteria_lookup": {
+      "description": "Lookup with multiple criteria",
+      "sheets_formula": "INDEX(return_range, MATCH(1, (criteria1_range=criteria1)*(criteria2_range=criteria2), 0))",
+      "polars_equivalent": "df.filter((pl.col('col1') == criteria1) & (pl.col('col2') == criteria2)).select('return_col')",
+      "array_formula": true,
+      "components": [
+        {
+          "function": "MATCH",
+          "purpose": "Find position matching multiple criteria",
+          "parameters": ["1", "criteria_array_product", "exact_match"]
+        },
+        {
+          "function": "INDEX",
+          "purpose": "Return value at matched position",
+          "parameters": ["return_range", "position"]
+        }
+      ],
+      "complexity_level": "advanced"
+    }
+  },
+  "conditional_aggregation_chains": {
+    "sumifs_with_date_logic": {
+      "description": "Sum with date range and category criteria",
+      "sheets_formula": "SUMIFS(sum_range, date_range, \">=\"&start_date, date_range, \"<=\"&end_date, category_range, category)",
+      "polars_equivalent": "df.filter((pl.col('date') >= start_date) & (pl.col('date') <= end_date) & (pl.col('category') == category)).select('amount').sum()",
+      "components": [
+        {
+          "function": "SUMIFS",
+          "purpose": "Conditional summation",
+          "criteria_count": 3
+        }
+      ],
+      "use_cases": [
+        "Monthly sales by product category",
+        "Expense analysis by period and type",
+        "Budget vs actual analysis"
+      ],
+      "complexity_level": "intermediate"
+    },
+    "countifs_with_wildcards": {
+      "description": "Count with pattern matching",
+      "sheets_formula": "COUNTIFS(text_range, \"*keyword*\", status_range, \"Active\")",
+      "polars_equivalent": "df.filter(pl.col('text').str.contains('keyword') & (pl.col('status') == 'Active')).count()",
+      "components": [
+        {
+          "function": "COUNTIFS",
+          "purpose": "Pattern-based conditional counting",
+          "features": ["wildcard_matching", "multiple_criteria"]
+        }
+      ],
+      "complexity_level": "intermediate"
+    },
+    "nested_averageifs": {
+      "description": "Conditional average with complex criteria",
+      "sheets_formula": "AVERAGEIFS(value_range, category_range, category, date_range, \">=\"&EOMONTH(TODAY(),-1)+1, date_range, \"<=\"&EOMONTH(TODAY(),0))",
+      "polars_equivalent": "df.filter((pl.col('category') == category) & (pl.col('date') >= month_start) & (pl.col('date') <= month_end)).select('value').mean()",
+      "components": [
+        {
+          "function": "AVERAGEIFS",
+          "purpose": "Conditional averaging"
+        },
+        {
+          "function": "EOMONTH",
+          "purpose": "Calculate month boundaries",
+          "nested": true
+        },
+        {
+          "function": "TODAY",
+          "purpose": "Current date reference",
+          "nested": true
+        }
+      ],
+      "complexity_level": "advanced"
+    }
+  },
+  "financial_calculation_chains": {
+    "loan_payment_schedule": {
+      "description": "Complete loan amortization calculations",
+      "formula_chain": [
+        "Payment: PMT(rate/12, periods, -principal)",
+        "Interest: IPMT(rate/12, period_num, periods, -principal)",
+        "Principal: PPMT(rate/12, period_num, periods, -principal)",
+        "Balance: principal + CUMPRINC(rate/12, periods, -principal, 1, period_num, 0)"
+      ],
+      "polars_equivalent": "Vectorized loan schedule calculation across all periods",
+      "components": [
+        {"function": "PMT", "purpose": "Monthly payment calculation"},
+        {"function": "IPMT", "purpose": "Interest portion per period"},
+        {"function": "PPMT", "purpose": "Principal portion per period"},
+        {"function": "CUMPRINC", "purpose": "Cumulative principal payments"}
+      ],
+      "use_cases": [
+        "Mortgage amortization table",
+        "Equipment loan analysis",
+        "Debt service coverage calculations"
+      ],
+      "complexity_level": "advanced"
+    },
+    "npv_with_terminal_value": {
+      "description": "NPV calculation with terminal value",
+      "sheets_formula": "NPV(discount_rate, cash_flows) + terminal_value / (1 + discount_rate)^periods",
+      "polars_equivalent": "npv_cash_flows + (terminal_value / (1 + discount_rate)**periods)",
+      "components": [
+        {"function": "NPV", "purpose": "Present value of explicit cash flows"},
+        {"function": "Power calculation", "purpose": "Terminal value discounting"}
+      ],
+      "complexity_level": "advanced"
+    },
+    "irr_with_xnpv_validation": {
+      "description": "IRR calculation with NPV validation",
+      "formula_chain": [
+        "IRR_result: IRR(cash_flows, guess)",
+        "Validation: ABS(NPV(IRR_result, cash_flows)) < 0.01"
+      ],
+      "polars_equivalent": "Iterative IRR with NPV convergence check",
+      "complexity_level": "advanced"
+    }
+  },
+  "text_processing_chains": {
+    "name_parsing_chain": {
+      "description": "Extract first and last name from full name",
+      "formula_chain": [
+        "First Name: LEFT(full_name, FIND(\" \", full_name) - 1)",
+        "Last Name: RIGHT(full_name, LEN(full_name) - FIND(\"~\", SUBSTITUTE(full_name, \" \", \"~\", LEN(full_name) - LEN(SUBSTITUTE(full_name, \" \", \"\")))))"
+      ],
+      "polars_equivalent": "pl.col('full_name').str.split(' ').list.get(0), pl.col('full_name').str.split(' ').list.get(-1)",
+      "components": [
+        {"function": "LEFT", "purpose": "Extract first part"},
+        {"function": "FIND", "purpose": "Locate space position"},
+        {"function": "RIGHT", "purpose": "Extract last part"},
+        {"function": "SUBSTITUTE", "purpose": "Handle multiple spaces"}
+      ],
+      "complexity_level": "advanced"
+    },
+    "address_standardization": {
+      "description": "Standardize address formats",
+      "formula_chain": [
+        "Clean: TRIM(UPPER(SUBSTITUTE(SUBSTITUTE(address, \"  \", \" \"), \".\", \"\")))",
+        "Street: LEFT(Clean, FIND(\",\", Clean) - 1)",
+        "City_State: MID(Clean, FIND(\",\", Clean) + 2, FIND(\",\", Clean, FIND(\",\", Clean) + 1) - FIND(\",\", Clean) - 2)"
+      ],
+      "polars_equivalent": "Multiple string operations with regex patterns",
+      "complexity_level": "advanced"
+    }
+  },
+  "array_formula_chains": {
+    "dynamic_ranking_system": {
+      "description": "Rank items dynamically with ties",
+      "sheets_formula": "ARRAYFORMULA(IF(data_range=\"\", \"\", RANK(data_range, data_range, 0) + COUNTIFS(data_range, data_range, ROW(data_range), \"<\"&ROW(data_range)) - 1))",
+      "polars_equivalent": "df.with_row_count().with_columns(pl.col('value').rank('min').alias('rank'))",
+      "array_formula": true,
+      "components": [
+        {"function": "RANK", "purpose": "Basic ranking"},
+        {"function": "COUNTIFS", "purpose": "Handle tie-breaking"},
+        {"function": "ROW", "purpose": "Position reference"},
+        {"function": "ARRAYFORMULA", "purpose": "Apply to entire range"}
+      ],
+      "complexity_level": "expert"
+    },
+    "rolling_average_calculation": {
+      "description": "Calculate rolling N-period average",
+      "sheets_formula": "ARRAYFORMULA(IF(ROW(data_range)>=N, AVERAGE(OFFSET(data_range, ROW(data_range)-N, 0, N, 1)), \"\"))",
+      "polars_equivalent": "df.with_columns(pl.col('value').rolling_mean(window_size=N))",
+      "array_formula": true,
+      "components": [
+        {"function": "AVERAGE", "purpose": "Calculate mean"},
+        {"function": "OFFSET", "purpose": "Define rolling window"},
+        {"function": "ROW", "purpose": "Dynamic positioning"},
+        {"function": "IF", "purpose": "Handle insufficient data periods"}
+      ],
+      "complexity_level": "expert"
+    },
+    "conditional_formatting_helper": {
+      "description": "Generate conditional formatting conditions",
+      "sheets_formula": "ARRAYFORMULA(IF(data_range>PERCENTILE(data_range, 0.8), \"High\", IF(data_range<PERCENTILE(data_range, 0.2), \"Low\", \"Medium\")))",
+      "polars_equivalent": "df.with_columns(pl.when(pl.col('value') > pl.col('value').quantile(0.8)).then('High').when(pl.col('value') < pl.col('value').quantile(0.2)).then('Low').otherwise('Medium'))",
+      "array_formula": true,
+      "complexity_level": "advanced"
+    }
+  },
+  "data_validation_chains": {
+    "cascading_dropdown_validation": {
+      "description": "Dependent dropdown lists",
+      "implementation": {
+        "primary_dropdown": "UNIQUE(primary_data_range)",
+        "secondary_dropdown": "FILTER(secondary_data_range, primary_column=selected_primary)",
+        "validation_formula": "INDIRECT(\"validation_\"&SUBSTITUTE(primary_selection, \" \", \"_\"))"
+      },
+      "polars_equivalent": "Hierarchical filtering based on parent selection",
+      "complexity_level": "advanced"
+    },
+    "business_rule_validation": {
+      "description": "Complex business logic validation",
+      "validation_chain": [
+        "Date Logic: end_date > start_date",
+        "Budget Logic: SUM(line_items) <= budget_limit",
+        "Dependency Logic: IF(project_type=\"Complex\", required_approvals>=3, required_approvals>=1)"
+      ],
+      "polars_equivalent": "Multiple filter conditions with business rules",
+      "complexity_level": "advanced"
+    }
+  },
+  "performance_optimization": {
+    "large_dataset_processing": {
+      "description": "Optimized formulas for large datasets",
+      "techniques": {
+        "array_formulas": "Process entire ranges at once",
+        "helper_columns": "Break complex formulas into steps",
+        "table_references": "Use structured references for clarity",
+        "volatile_function_minimization": "Reduce use of NOW(), TODAY(), RAND()"
+      },
+      "polars_advantages": [
+        "Lazy evaluation for query optimization",
+        "Columnar processing for better performance",
+        "Parallel execution capabilities",
+        "Memory-efficient operations"
+      ]
+    },
+    "formula_chain_optimization": {
+      "description": "Optimize complex formula chains",
+      "strategies": {
+        "common_subexpressions": "Calculate once, reference multiple times",
+        "conditional_short_circuiting": "Use IF to avoid unnecessary calculations",
+        "range_minimization": "Use smallest possible ranges",
+        "calculation_mode": "Consider manual calculation for complex models"
+      }
+    }
+  }
+}
