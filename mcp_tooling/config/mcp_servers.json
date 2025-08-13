@@ -2,15 +2,138 @@
     "servers": [
         {
             "name": "filesystem",
-            "description": "Filesystem operations server for file management",
+            "description": "Filesystem operations server for file management and data persistence across data, scratch_pad, and memory directories.",
             "base_url": "http://fpa-mcp-services:3001",
-            "service_path": "/fs_mcp"
+            "service_path": "/fs_mcp",
+            "core_functions": "read_file(path), write_file(path, content), list_files(path), create_directory(path), delete_file(path), move_file(source, destination), copy_file(source, destination), get_file_info(path)",
+            "primary_use_cases": [
+                "Manage financial data files and datasets across organized directory structures",
+                "Persist calculation results and analysis outputs for future reference",
+                "Handle temporary workspace files and memory storage for ongoing analysis",
+                "Facilitate data import/export operations between different financial systems"
+            ],
+            "best_for": "File system operations requiring secure data management, persistent storage of financial calculations, and organized data workflows.",
+            "keywords": "file management, data persistence, storage, directories, import, export, datasets, workspace"
         },
         {
-            "name": "math_and_aggregation",
-            "description": "Calculate fundamental financial totals, averages, and statistical measures for revenue, expenses, and cash flows. Perform mathematical transformations for compound growth, volatility calculations, and risk modeling. Aggregate financial metrics across periods, categories, or business segments. Execute precision calculations for accounting, budgeting, and financial reporting requirements. Best for tasks requiring basic mathematical calculations on financial datasets, statistical analysis of performance metrics, or fundamental aggregation operations with decimal precision.",
-            "base_url": "http://fpa-tools-mcp-service:3002",
-            "service_path": "/math_mcp"
+            "name": "sheets_structure",
+            "description": "Google Sheets structure management server for creating, organizing, and managing spreadsheets and worksheets.",
+            "base_url": "http://fpa-sheets-structure:3010",
+            "service_path": "",
+            "core_functions": "create_spreadsheet(title, initial_sheets), get_spreadsheet_info(spreadsheet_id), add_sheet(spreadsheet_id, sheet_name, rows, columns), delete_sheet(spreadsheet_id, sheet_id), duplicate_sheet(spreadsheet_id, source_sheet_id, new_sheet_name), update_sheet_properties(spreadsheet_id, sheet_id, title, row_count, column_count), get_auth_status()",
+            "primary_use_cases": [
+                "Create and organize financial reporting spreadsheets with proper structure and naming",
+                "Manage multi-sheet workbooks for complex financial analysis and consolidated reporting",
+                "Set up standardized templates for recurring financial reports and dashboards",
+                "Maintain spreadsheet metadata and properties for audit trail and governance"
+            ],
+            "best_for": "Spreadsheet creation, organization, and structural management requiring standardized financial reporting templates and multi-sheet workbook organization.",
+            "keywords": "spreadsheet creation, sheet management, workbook organization, templates, financial reports, structure, metadata"
+        },
+        {
+            "name": "sheets_data",
+            "description": "Google Sheets data operations server for reading, writing, and manipulating cell data and ranges.",
+            "base_url": "http://fpa-sheets-data:3011",
+            "service_path": "",
+            "core_functions": "read_values(spreadsheet_id, range_spec, value_render_option), write_values(spreadsheet_id, range_spec, values, value_input_option), append_values(spreadsheet_id, range_spec, values, value_input_option), batch_update_values(spreadsheet_id, data, value_input_option), clear_values(spreadsheet_id, range_spec), copy_paste(spreadsheet_id, source_range, destination_range, paste_type), read_for_polars(spreadsheet_id, range_spec)",
+            "primary_use_cases": [
+                "Import and export financial data between Google Sheets and analytical systems",
+                "Update financial reports and dashboards with real-time calculation results",
+                "Batch process large datasets for efficient financial data management",
+                "Synchronize data between local analysis tools and cloud-based reporting platforms"
+            ],
+            "best_for": "Data transfer operations, bulk data updates, real-time financial reporting synchronization, and integration between analytical tools and spreadsheets.",
+            "keywords": "data import, export, bulk updates, synchronization, real-time, batch processing, integration, values"
+        },
+        {
+            "name": "sheets_formula",
+            "description": "Google Sheets formula operations server for applying, translating, and managing formulas with Polars integration.",
+            "base_url": "http://fpa-sheets-formula:3012",
+            "service_path": "",
+            "core_functions": "apply_formula(spreadsheet_id, range_spec, formula), translate_polars_to_formula(operation, range_notation, **kwargs), apply_polars_operation(spreadsheet_id, range_spec, operation, source_range, **kwargs), batch_apply_formulas(spreadsheet_id, formulas), get_formula_documentation(operation), validate_formula(formula), create_array_formula(spreadsheet_id, range_spec, formula), list_supported_operations(), get_formula_from_cell(spreadsheet_id, range_spec)",
+            "primary_use_cases": [
+                "Convert local Polars computations to equivalent Google Sheets formulas for transparency",
+                "Apply complex financial calculations directly to spreadsheet cells with validation",
+                "Maintain formula consistency across financial models and reporting templates",
+                "Bridge computational analysis with spreadsheet-based presentation and documentation"
+            ],
+            "best_for": "Formula management, Polars-to-Sheets translation, computational transparency, and maintaining calculation audit trails in financial models.",
+            "keywords": "formulas, translation, Polars integration, calculations, validation, array formulas, transparency, audit trail"
+        },
+        {
+            "name": "sheets_formatting",
+            "description": "Google Sheets formatting server for cell styling, conditional formatting, and visual presentation.",
+            "base_url": "http://fpa-sheets-formatting:3013",
+            "service_path": "",
+            "core_functions": "apply_cell_formatting(spreadsheet_id, range_spec, formatting), apply_number_formatting(spreadsheet_id, range_spec, format_type, decimal_places), apply_conditional_formatting(spreadsheet_id, range_spec, condition, format), remove_formatting(spreadsheet_id, range_spec), copy_formatting(spreadsheet_id, source_range, destination_range), create_formatting_preset(name, formatting)",
+            "primary_use_cases": [
+                "Format financial reports with proper currency, percentage, and number presentations",
+                "Apply conditional formatting for variance analysis and performance indicators",
+                "Standardize visual presentation across financial dashboards and reports",
+                "Create professional formatting templates for recurring financial documentation"
+            ],
+            "best_for": "Financial report presentation, conditional formatting for performance metrics, standardized visual formatting, and professional financial documentation.",
+            "keywords": "formatting, styling, conditional formatting, currency, percentages, visual presentation, templates, professional reports"
+        },
+        {
+            "name": "sheets_chart",
+            "description": "Google Sheets chart creation server for data visualization and financial dashboard components.",
+            "base_url": "http://fpa-sheets-chart:3014",
+            "service_path": "",
+            "core_functions": "create_chart(spreadsheet_id, chart_type, data_range, title, position), update_chart(spreadsheet_id, chart_id, updates), delete_chart(spreadsheet_id, chart_id), get_chart_info(spreadsheet_id, chart_id), create_dashboard_chart(spreadsheet_id, chart_config), list_chart_types()",
+            "primary_use_cases": [
+                "Create financial dashboards with trend analysis, performance comparisons, and KPI visualizations",
+                "Generate charts for budget vs actual analysis, variance reporting, and financial presentations",
+                "Build interactive financial reports with embedded visualizations for stakeholder communication",
+                "Produce standardized chart templates for recurring financial analysis and reporting"
+            ],
+            "best_for": "Financial data visualization, dashboard creation, performance reporting charts, and stakeholder presentation graphics.",
+            "keywords": "charts, visualization, dashboards, trends, KPIs, performance, budget analysis, presentations, graphics"
+        },
+        {
+            "name": "sheets_validation",
+            "description": "Google Sheets validation server for data quality, business rules, and compliance checking.",
+            "base_url": "http://fpa-sheets-validation:3015",
+            "service_path": "",
+            "core_functions": "add_data_validation(spreadsheet_id, range_spec, validation_rule), remove_data_validation(spreadsheet_id, range_spec), validate_business_rules(spreadsheet_id, rules), check_data_integrity(spreadsheet_id, validation_config), create_validation_template(template_name, rules), list_validation_examples()",
+            "primary_use_cases": [
+                "Ensure data integrity and accuracy in financial models and reporting systems",
+                "Implement business rules and compliance checks for regulatory requirements",
+                "Validate financial calculations and prevent data entry errors in critical spreadsheets",
+                "Maintain audit trails and quality assurance for financial data and calculations"
+            ],
+            "best_for": "Data quality assurance, compliance validation, business rule enforcement, and financial model integrity checking.",
+            "keywords": "validation, data integrity, business rules, compliance, quality assurance, audit, error prevention, accuracy"
+        },
+        {
+            "name": "sheets_functions",
+            "description": "Local computational server providing 200+ Google Sheets-compatible functions using Polars for high-performance financial calculations.",
+            "base_url": "http://fpa-sheets-functions:3002",
+            "service_path": "",
+            "core_functions": "sheets_sum(data_path, range_spec), sheets_average(data_path, range_spec), sheets_count(data_path, range_spec), sheets_min(data_path, range_spec), sheets_max(data_path, range_spec), sheets_vlookup(lookup_value, table_path, col_index, range_lookup), sheets_index(array_path, row_num, col_num), sheets_match(lookup_value, lookup_array, match_type), sheets_sumif(range_path, criteria, sum_range_path), sheets_countif(range_path, criteria), sheets_averageif(range_path, criteria, average_range_path), sheets_concatenate(*args), sheets_left(text, num_chars), sheets_right(text, num_chars), sheets_mid(text, start_num, num_chars), sheets_today(), sheets_date(year, month, day), sheets_if(logical_test, value_if_true, value_if_false), sheets_and(*conditions), sheets_or(*conditions)",
+            "primary_use_cases": [
+                "Perform high-speed financial calculations locally using Polars while maintaining Google Sheets compatibility",
+                "Execute complex aggregations, lookups, and statistical analysis on large financial datasets",
+                "Process bulk financial data without API limitations or network dependencies",
+                "Provide computational foundation for dual-execution financial workflows"
+            ],
+            "best_for": "High-performance local calculations, large dataset processing, Google Sheets function compatibility, and computational efficiency in financial analysis.",
+            "keywords": "local computation, Polars, high-performance, bulk processing, statistical analysis, aggregations, lookups, efficiency"
+        },
+        {
+            "name": "enhanced_dual_layer",
+            "description": "Advanced dual-execution server combining local Polars computation with Google Sheets formula transparency for optimal financial workflows.",
+            "base_url": "http://fpa-enhanced-dual:8010",
+            "service_path": "",
+            "core_functions": "dual_layer_sum(data_source, output_range, range_spec, column, spreadsheet_id, enable_validation), dual_layer_average(data_source, output_range, range_spec, column, spreadsheet_id, enable_validation), dual_layer_groupby_sum(data_source, group_column, sum_column, output_range, spreadsheet_id), dual_layer_complex_calculation(data_source, calculation_config, output_range, spreadsheet_id, validation_rules)",
+            "primary_use_cases": [
+                "Execute financial calculations locally for speed while maintaining transparency in Google Sheets",
+                "Provide audit trails and formula documentation for regulatory compliance and review",
+                "Optimize computational performance without sacrificing spreadsheet-based presentation and validation",
+                "Enable sophisticated financial modeling with both computational efficiency and business user accessibility"
+            ],
+            "best_for": "Complex financial workflows requiring both computational efficiency and spreadsheet transparency, regulatory compliance, and sophisticated financial modeling.",
+            "keywords": "dual execution, transparency, audit trails, regulatory compliance, optimization, sophisticated modeling, hybrid workflow"
         }
     ]
 }
