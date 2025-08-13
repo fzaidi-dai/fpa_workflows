@@ -2,6 +2,10 @@
 from fastmcp import FastMCP
 from typing import Dict, Any, List, Optional
 import logging
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
+import uvicorn
+import json
 
 # Import our API modules
 from ..api.auth import GoogleSheetsAuth
@@ -10,8 +14,9 @@ from ..api.error_handler import ErrorHandler
 
 logger = logging.getLogger(__name__)
 
-# Initialize MCP server
+# Initialize MCP server and FastAPI app
 mcp = FastMCP("Google Sheets Formatting Server")
+app = FastAPI(title="Google Sheets Formatting MCP Server", version="1.0.0")
 
 # Global auth and operations instances
 auth = GoogleSheetsAuth(scope_level='full')
@@ -167,5 +172,88 @@ async def create_formatting_preset(
     logger.info(f"Created formatting preset '{name}'")
     return preset
 
-# Export the mcp instance
-__all__ = ['mcp']
+# ================== FASTAPI ENDPOINTS ==================
+
+class MCPRequest(BaseModel):
+    """Request model for MCP operations."""
+    method: str = Field(..., description="MCP method to call")
+    params: Dict[str, Any] = Field(default={}, description="Parameters for the method")
+
+@app.post("/")
+async def handle_mcp_request(request: MCPRequest) -> Dict[str, Any]:
+    """
+    Handle MCP requests via FastAPI endpoint.
+    
+    This endpoint processes MCP tool calls and returns appropriate responses.
+    """
+    try:
+        if request.method == "tools/list":
+            # Return list of available tools
+            tools = []
+            for tool_name, tool_func in mcp._tools.items():
+                tool_info = {
+                    "name": tool_name,
+                    "description": tool_func.__doc__ or f"Tool: {tool_name}",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {},
+                        "required": []
+                    }
+                }
+                tools.append(tool_info)
+            
+            return {"tools": tools}
+            
+        elif request.method == "tools/call":
+            # Call a specific tool
+            tool_name = request.params.get("name")
+            arguments = request.params.get("arguments", {})
+            
+            if tool_name not in mcp._tools:
+                raise HTTPException(status_code=404, detail=f"Tool '{tool_name}' not found")
+            
+            # Call the tool
+            result = await mcp._tools[tool_name](**arguments)
+            
+            # Format response according to MCP protocol
+            return {
+                "content": [
+                    {
+                        "type": "text",
+                        "text": json.dumps(result)
+                    }
+                ]
+            }
+            
+        else:
+            raise HTTPException(status_code=400, detail=f"Unknown method: {request.method}")
+            
+    except Exception as e:
+        logger.error(f"Error handling MCP request: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint."""
+    return {"status": "healthy", "service": "Google Sheets Formatting MCP Server"}
+
+# Main function to run the server
+def main():
+    """Run the FastAPI server."""
+    import sys
+    
+    port = 3013  # Default port for formatting server
+    if len(sys.argv) > 1:
+        try:
+            port = int(sys.argv[1])
+        except ValueError:
+            print(f"Invalid port: {sys.argv[1]}, using default port {port}")
+    
+    logger.info(f"Starting Google Sheets Formatting MCP Server on port {port}")
+    uvicorn.run(app, host="0.0.0.0", port=port)
+
+if __name__ == "__main__":
+    main()
+
+# Export the mcp instance and app
+__all__ = ['mcp', 'app']

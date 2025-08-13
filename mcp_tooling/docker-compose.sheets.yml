@@ -1,0 +1,200 @@
+version: '3.8'
+
+services:
+  # ==================== GOOGLE SHEETS MCP SERVERS ====================
+  
+  sheets-structure-server:
+    build:
+      context: ..
+      dockerfile: mcp_tooling/Dockerfile.python
+    container_name: fpa-sheets-structure
+    restart: unless-stopped
+    ports:
+      - "3010:3010"
+    expose:
+      - "3010"
+    volumes:
+      - ../data:/mcp-data/data:rw
+      - ../scratch_pad:/mcp-data/scratch_pad:rw
+      - ../memory:/mcp-data/memory:rw
+    environment:
+      - STRUCTURE_SERVER_PORT=3010
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/google-sheets-key.json
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3010/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - fpa-network
+    working_dir: /app/mcp_tooling
+    command: ["uv", "run", "python", "-m", "google_sheets.structure_server.sheets_structure_mcp"]
+
+  sheets-data-server:
+    build:
+      context: ..
+      dockerfile: mcp_tooling/Dockerfile.python
+    container_name: fpa-sheets-data
+    restart: unless-stopped
+    ports:
+      - "3011:3011"
+    expose:
+      - "3011"
+    volumes:
+      - ../data:/mcp-data/data:rw
+      - ../scratch_pad:/mcp-data/scratch_pad:rw
+      - ../memory:/mcp-data/memory:rw
+    environment:
+      - DATA_SERVER_PORT=3011
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/google-sheets-key.json
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3011/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - fpa-network
+    working_dir: /app/mcp_tooling
+    command: ["uv", "run", "python", "-m", "google_sheets.data_server.sheets_data_mcp"]
+
+  sheets-formula-server:
+    build:
+      context: ..
+      dockerfile: mcp_tooling/Dockerfile.python
+    container_name: fpa-sheets-formula
+    restart: unless-stopped
+    ports:
+      - "3012:3012"
+    expose:
+      - "3012"
+    volumes:
+      - ../data:/mcp-data/data:rw
+      - ../scratch_pad:/mcp-data/scratch_pad:rw
+      - ../memory:/mcp-data/memory:rw
+    environment:
+      - FORMULA_SERVER_PORT=3012
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/google-sheets-key.json
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3012/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - fpa-network
+    working_dir: /app/mcp_tooling
+    command: ["uv", "run", "python", "-m", "google_sheets.formula_server.sheets_formula_mcp"]
+
+  sheets-functions-server:
+    build:
+      context: ..
+      dockerfile: mcp_tooling/Dockerfile.python
+    container_name: fpa-sheets-functions
+    restart: unless-stopped
+    ports:
+      - "3002:3002"
+    expose:
+      - "3002"
+    volumes:
+      - ../data:/mcp-data/data:rw
+      - ../scratch_pad:/mcp-data/scratch_pad:rw
+      - ../memory:/mcp-data/memory:rw
+    environment:
+      - FUNCTIONS_SERVER_PORT=3002
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - fpa-network
+    working_dir: /app/mcp_tooling
+    command: ["uv", "run", "python", "sheets_functions_mcp_server.py"]
+
+  # ==================== EXISTING MCP SERVERS ====================
+  
+  mcp-services:
+    build:
+      context: ..
+      dockerfile: mcp_tooling/Dockerfile.python
+    container_name: fpa-mcp-services
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    expose:
+      - "3001"
+    volumes:
+      - ../data:/mcp-data/data:rw
+      - ../scratch_pad:/mcp-data/scratch_pad:rw
+      - ../memory:/mcp-data/memory:rw
+    environment:
+      - FILESYSTEM_SERVER_PORT=3001
+      - ALLOWED_DIRECTORIES=/mcp-data/data,/mcp-data/scratch_pad,/mcp-data/memory
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - fpa-network
+    working_dir: /app/mcp_tooling
+    command: ["uv", "run", "python", "fs_mcp_server.py"]
+
+networks:
+  fpa-network:
+    external: true
+    name: fpa_agents_fpa-network

@@ -645,3 +645,20 @@ if __name__ == "__main__":
     print("- Array: TRANSPOSE, UNIQUE, SORT, FILTER")
     print("- Logical: IF, AND, OR, NOT, IFERROR")
     asyncio.run(main())
+
+def main():
+    """Run the FastAPI server."""
+    import sys
+    
+    port = 3002  # Default port for sheets functions server
+    if len(sys.argv) > 1:
+        try:
+            port = int(sys.argv[1])
+        except ValueError:
+            print(f"Invalid port: {sys.argv[1]}, using default port {port}")
+    
+    logger.info(f"Starting Google Sheets Functions MCP Server on port {port}")
+    uvicorn.run(app, host="0.0.0.0", port=port)
+
+if __name__ == "__main__":
+    main()

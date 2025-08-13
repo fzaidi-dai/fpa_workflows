@@ -503,3 +503,17 @@ if __name__ == "__main__":
     print("- dual_layer_groupby_sum: GROUP BY SUM with SUMIF formulas")
     print("- dual_layer_complex_calculation: Advanced calculations with validation")
     asyncio.run(main())
+
+def run_server():
+    """Run the FastAPI server."""
+    import sys
+    
+    port = 8010  # Default port for enhanced dual layer server
+    if len(sys.argv) > 1:
+        try:
+            port = int(sys.argv[1])
+        except ValueError:
+            print(f"Invalid port: {sys.argv[1]}, using default port {port}")
+    
+    logger.info(f"Starting Enhanced Dual-Layer Math MCP Server on port {port}")
+    uvicorn.run(app, host="0.0.0.0", port=port)
