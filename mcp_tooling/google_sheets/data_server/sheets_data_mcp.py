@@ -32,6 +32,33 @@ def get_value_ops():
         value_ops = ValueOperations(service)
     return value_ops
 
+
+class GoogleSheetsDataTools:
+    """
+    Focused MCP tools for Google Sheets data operations.
+    
+    This specialized server handles all data needs:
+    - Data reading: single ranges, batch reads, formatted values
+    - Data writing: single ranges, batch writes, append operations
+    - Polars integration: DataFrame to/from Sheets conversion
+    """
+    
+    def __init__(self):
+        self.auth = GoogleSheetsAuth(scope_level='full')
+        self.value_ops = None
+        logger.info("📊 GoogleSheetsDataTools initialized")
+        
+    def get_value_ops(self):
+        """Get authenticated value operations instance"""
+        if self.value_ops is None:
+            service = self.auth.authenticate()
+            self.value_ops = ValueOperations(service)
+        return self.value_ops
+
+
+# Global instance
+data_tools = GoogleSheetsDataTools()
+
 @mcp.tool()
 @ErrorHandler.retry_with_backoff(max_retries=3)
 async def read_values(
@@ -51,7 +78,7 @@ async def read_values(
         Dictionary containing values and metadata
     """
     try:
-        ops = get_value_ops()
+        ops = data_tools.get_value_ops()
         values = ops.get_values(spreadsheet_id, range_spec)
         
         # Get range dimensions for metadata
@@ -93,7 +120,7 @@ async def write_values(
         Dictionary containing update result and metadata
     """
     try:
-        ops = get_value_ops()
+        ops = data_tools.get_value_ops()
         result = ops.update_values(spreadsheet_id, range_spec, value_input_option, values)
         
         response = {
@@ -128,7 +155,7 @@ async def batch_read_values(
         Dictionary containing values for each range
     """
     try:
-        ops = get_value_ops()
+        ops = data_tools.get_value_ops()
         results = ops.batch_get_values(spreadsheet_id, ranges)
         
         # Format results by range
@@ -172,7 +199,7 @@ async def batch_write_values(
         Dictionary containing batch update results
     """
     try:
-        ops = get_value_ops()
+        ops = data_tools.get_value_ops()
         result = ops.batch_update_values(spreadsheet_id, data, value_input_option)
         
         response = {
@@ -210,7 +237,7 @@ async def append_values(
         Dictionary containing append result and metadata
     """
     try:
-        ops = get_value_ops()
+        ops = data_tools.get_value_ops()
         result = ops.append_values(spreadsheet_id, range_spec, value_input_option, values)
         
         updates = result.get('updates', {})
@@ -245,7 +272,7 @@ async def clear_values(
         Dictionary containing clear result
     """
     try:
-        ops = get_value_ops()
+        ops = data_tools.get_value_ops()
         result = ops.clear_values(spreadsheet_id, range_spec)
         
         response = {
@@ -304,7 +331,7 @@ async def polars_to_sheets(
         range_spec = f"{sheet_name}!{start_cell}:{end_col_letter}{end_row + 1}"
         
         # Write values
-        ops = get_value_ops()
+        ops = data_tools.get_value_ops()
         result = ops.update_values(spreadsheet_id, range_spec, 'USER_ENTERED', values)
         
         response = {
@@ -341,7 +368,7 @@ async def sheets_to_polars(
         Dictionary with data formatted for Polars DataFrame creation
     """
     try:
-        ops = get_value_ops()
+        ops = data_tools.get_value_ops()
         values = ops.get_values(spreadsheet_id, range_spec)
         
         if not values:

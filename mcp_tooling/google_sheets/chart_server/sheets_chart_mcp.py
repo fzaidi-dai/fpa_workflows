@@ -31,6 +31,33 @@ def get_batch_ops():
         batch_ops = BatchOperations(service)
     return batch_ops
 
+
+class GoogleSheetsChartTools:
+    """
+    Focused MCP tools for Google Sheets chart operations.
+    
+    This specialized server handles all chart needs:
+    - Chart creation: line, column, bar, pie, scatter charts
+    - Pivot tables: data summarization and analysis
+    - Chart management: positioning and configuration
+    """
+    
+    def __init__(self):
+        self.auth = GoogleSheetsAuth(scope_level='full')
+        self.batch_ops = None
+        logger.info("📈 GoogleSheetsChartTools initialized")
+        
+    def get_batch_ops(self):
+        """Get authenticated batch operations instance"""
+        if self.batch_ops is None:
+            service = self.auth.authenticate()
+            self.batch_ops = BatchOperations(service)
+        return self.batch_ops
+
+
+# Global instance
+chart_tools = GoogleSheetsChartTools()
+
 @mcp.tool()
 @ErrorHandler.retry_with_backoff(max_retries=3)
 async def create_chart(
@@ -112,7 +139,7 @@ async def create_chart(
             }
         }
         
-        ops = get_batch_ops()
+        ops = chart_tools.get_batch_ops()
         result = ops.batch_update(spreadsheet_id, [request])
         
         response = {
@@ -186,7 +213,7 @@ async def create_pivot_table(
             }
         }
         
-        ops = get_batch_ops()
+        ops = chart_tools.get_batch_ops()
         result = ops.batch_update(spreadsheet_id, [request])
         
         response = {

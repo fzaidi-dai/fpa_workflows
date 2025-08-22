@@ -30,6 +30,45 @@ def get_batch_ops():
         batch_ops = BatchOperations(service)
     return batch_ops
 
+
+class GoogleSheetsFormatTools:
+    """
+    Focused MCP tools for Google Sheets formatting operations.
+    
+    This specialized server handles all formatting needs:
+    - Cell formatting: background colors, text formatting, borders
+    - Conditional formatting: highlight cells based on conditions
+    - Format presets: reusable formatting configurations
+    """
+    
+    def __init__(self):
+        self.auth = GoogleSheetsAuth(scope_level='full')
+        self.batch_ops = None
+        logger.info("🎨 GoogleSheetsFormatTools initialized")
+        
+    def get_batch_ops(self):
+        """Get authenticated batch operations instance"""
+        if self.batch_ops is None:
+            service = self.auth.authenticate()
+            self.batch_ops = BatchOperations(service)
+        return self.batch_ops
+    
+    async def apply_cell_formatting(self, spreadsheet_id: str, range_spec: str, formatting: Dict[str, Any]) -> Dict[str, Any]:
+        """Apply formatting to a cell range - Tool class method"""
+        return await apply_cell_formatting(spreadsheet_id, range_spec, formatting)
+    
+    async def apply_conditional_formatting(self, spreadsheet_id: str, range_spec: str, condition: Dict[str, Any], format_style: Dict[str, Any]) -> Dict[str, Any]:
+        """Apply conditional formatting to a range - Tool class method"""
+        return await apply_conditional_formatting(spreadsheet_id, range_spec, condition, format_style)
+    
+    async def create_formatting_preset(self, name: str, formatting: Dict[str, Any]) -> Dict[str, Any]:
+        """Create a formatting preset for reuse - Tool class method"""
+        return await create_formatting_preset(name, formatting)
+
+
+# Global instance
+format_tools = GoogleSheetsFormatTools()
+
 @mcp.tool()
 @ErrorHandler.retry_with_backoff(max_retries=3)
 async def apply_cell_formatting(
@@ -70,7 +109,7 @@ async def apply_cell_formatting(
             }
         }
         
-        ops = get_batch_ops()
+        ops = format_tools.get_batch_ops()
         result = ops.batch_update(spreadsheet_id, [request])
         
         response = {
@@ -129,7 +168,7 @@ async def apply_conditional_formatting(
             }
         }
         
-        ops = get_batch_ops()
+        ops = format_tools.get_batch_ops()
         result = ops.batch_update(spreadsheet_id, [request])
         
         response = {

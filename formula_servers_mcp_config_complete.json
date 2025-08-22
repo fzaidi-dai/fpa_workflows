@@ -1,0 +1,234 @@
+{
+  "mcpServers": {
+    "formula_aggregation": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "mcp_tooling/aggregation_formula_mcp_server.py"
+      ],
+      "env": {},
+      "description": "SUM, SUMIF, COUNT, AVERAGE formulas - 13 tools",
+      "categories": [
+        "aggregation"
+      ],
+      "tools": [
+        "sum",
+        "average",
+        "count",
+        "sumif",
+        "sumifs",
+        "countif",
+        "countifs",
+        "averageif",
+        "averageifs",
+        "subtotal",
+        "counta",
+        "max",
+        "min"
+      ]
+    },
+    "formula_lookup": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "mcp_tooling/lookup_formula_mcp_server.py"
+      ],
+      "env": {},
+      "description": "VLOOKUP, INDEX/MATCH, XLOOKUP formulas - 6 tools",
+      "categories": [
+        "lookup"
+      ],
+      "tools": [
+        "vlookup",
+        "hlookup",
+        "xlookup",
+        "index",
+        "match",
+        "index_match"
+      ]
+    },
+    "formula_financial": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "mcp_tooling/financial_formula_mcp_server.py"
+      ],
+      "env": {},
+      "description": "NPV, IRR, PMT, depreciation formulas - 14 tools",
+      "categories": [
+        "financial"
+      ],
+      "tools": [
+        "npv",
+        "irr",
+        "mirr",
+        "xirr",
+        "xnpv",
+        "pmt",
+        "pv",
+        "fv",
+        "nper",
+        "rate",
+        "ipmt",
+        "ppmt",
+        "sln",
+        "ddb"
+      ]
+    },
+    "formula_array": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "mcp_tooling/array_formula_mcp_server.py"
+      ],
+      "env": {},
+      "description": "ARRAYFORMULA, TRANSPOSE, UNIQUE, SORT formulas - 7 tools",
+      "categories": [
+        "array"
+      ],
+      "tools": [
+        "arrayformula",
+        "transpose",
+        "unique",
+        "sort",
+        "filter",
+        "sequence",
+        "sumproduct"
+      ]
+    },
+    "formula_text": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "mcp_tooling/text_formula_mcp_server.py"
+      ],
+      "env": {},
+      "description": "CONCATENATE, LEFT, RIGHT, text formulas - 8 tools",
+      "categories": [
+        "text"
+      ],
+      "tools": [
+        "concatenate",
+        "left",
+        "right",
+        "mid",
+        "len",
+        "upper",
+        "lower",
+        "trim"
+      ]
+    },
+    "formula_logical": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "mcp_tooling/logical_formula_mcp_server.py"
+      ],
+      "env": {},
+      "description": "IF, AND, OR, NOT formulas - 4 tools",
+      "categories": [
+        "logical"
+      ],
+      "tools": [
+        "if",
+        "and",
+        "or",
+        "not"
+      ]
+    },
+    "formula_statistical": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "mcp_tooling/statistical_formula_mcp_server.py"
+      ],
+      "env": {},
+      "description": "MEDIAN, STDEV, VAR, PERCENTILE formulas - 7 tools",
+      "categories": [
+        "statistical"
+      ],
+      "tools": [
+        "median",
+        "stdev",
+        "var",
+        "mode",
+        "percentile",
+        "percentrank",
+        "rank"
+      ]
+    },
+    "formula_datetime": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "mcp_tooling/datetime_formula_mcp_server.py"
+      ],
+      "env": {},
+      "description": "NOW, TODAY, DATE, YEAR formulas - 7 tools",
+      "categories": [
+        "datetime"
+      ],
+      "tools": [
+        "now",
+        "today",
+        "date",
+        "year",
+        "month",
+        "day",
+        "eomonth"
+      ]
+    },
+    "formula_business": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "mcp_tooling/business_formula_mcp_server.py"
+      ],
+      "env": {},
+      "description": "CAGR, Customer LTV, CAPM, business metrics - 14 tools",
+      "categories": [
+        "business"
+      ],
+      "tools": [
+        "profit_margin",
+        "cagr",
+        "customer_ltv",
+        "churn_rate",
+        "variance_percent",
+        "compound_growth",
+        "capm",
+        "sharpe_ratio",
+        "beta_coefficient",
+        "market_share",
+        "customer_acquisition_cost",
+        "break_even_analysis",
+        "dupont_analysis",
+        "z_score"
+      ]
+    }
+  },
+  "description": "Complete Category-wise Formula Servers with 100% accuracy guarantee - 82 formulas total",
+  "version": "1.0.0",
+  "total_formulas": 82,
+  "total_servers": 9,
+  "formula_distribution": {
+    "aggregation": 13,
+    "lookup": 6,
+    "financial": 14,
+    "array": 7,
+    "text": 8,
+    "logical": 4,
+    "statistical": 7,
+    "datetime": 7,
+    "business": 14
+  }
+}

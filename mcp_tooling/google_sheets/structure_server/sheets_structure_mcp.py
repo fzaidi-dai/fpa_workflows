@@ -29,6 +29,33 @@ def get_spreadsheet_ops():
         spreadsheet_ops = SpreadsheetOperations(service)
     return spreadsheet_ops
 
+
+class GoogleSheetsStructureTools:
+    """
+    Focused MCP tools for Google Sheets structure operations.
+    
+    This specialized server handles all structure needs:
+    - Spreadsheet management: create, get info, metadata
+    - Sheet management: add, delete, duplicate, update properties
+    - Authentication: auth status and configuration
+    """
+    
+    def __init__(self):
+        self.auth = GoogleSheetsAuth(scope_level='full')
+        self.spreadsheet_ops = None
+        logger.info("🏗️ GoogleSheetsStructureTools initialized")
+        
+    def get_spreadsheet_ops(self):
+        """Get authenticated spreadsheet operations instance"""
+        if self.spreadsheet_ops is None:
+            service = self.auth.authenticate()
+            self.spreadsheet_ops = SpreadsheetOperations(service)
+        return self.spreadsheet_ops
+
+
+# Global instance
+structure_tools = GoogleSheetsStructureTools()
+
 @mcp.tool()
 @ErrorHandler.retry_with_backoff(max_retries=3)
 async def create_spreadsheet(
@@ -46,7 +73,7 @@ async def create_spreadsheet(
         Dictionary containing spreadsheet_id, spreadsheet_url, and sheet names
     """
     try:
-        ops = get_spreadsheet_ops()
+        ops = structure_tools.get_spreadsheet_ops()
         
         if initial_sheets:
             result = ops.create_with_sheets(title, initial_sheets)
@@ -78,7 +105,7 @@ async def get_spreadsheet_info(spreadsheet_id: str) -> Dict[str, Any]:
         Dictionary containing spreadsheet metadata
     """
     try:
-        ops = get_spreadsheet_ops()
+        ops = structure_tools.get_spreadsheet_ops()
         metadata = ops.get_metadata(spreadsheet_id)
         
         # Extract useful information
@@ -124,7 +151,7 @@ async def add_sheet(
         Dictionary containing new sheet properties
     """
     try:
-        ops = get_spreadsheet_ops()
+        ops = structure_tools.get_spreadsheet_ops()
         sheet_properties = ops.add_sheet(spreadsheet_id, sheet_name, rows, columns)
         
         result = {
@@ -155,7 +182,7 @@ async def delete_sheet(spreadsheet_id: str, sheet_id: int) -> Dict[str, Any]:
         Dictionary indicating success/failure
     """
     try:
-        ops = get_spreadsheet_ops()
+        ops = structure_tools.get_spreadsheet_ops()
         success = ops.delete_sheet(spreadsheet_id, sheet_id)
         
         result = {"success": success}
@@ -187,7 +214,7 @@ async def duplicate_sheet(
         Dictionary containing new sheet properties
     """
     try:
-        ops = get_spreadsheet_ops()
+        ops = structure_tools.get_spreadsheet_ops()
         sheet_properties = ops.duplicate_sheet(spreadsheet_id, source_sheet_id, new_sheet_name)
         
         result = {
@@ -227,7 +254,7 @@ async def update_sheet_properties(
         Dictionary indicating success/failure
     """
     try:
-        ops = get_spreadsheet_ops()
+        ops = structure_tools.get_spreadsheet_ops()
         
         # Build grid properties if row/column counts are specified
         grid_properties = {}
@@ -270,7 +297,7 @@ async def get_auth_status() -> Dict[str, Any]:
         Dictionary containing authentication details
     """
     try:
-        auth_info = auth.get_auth_info()
+        auth_info = structure_tools.auth.get_auth_info()
         return {
             "status": "success",
             "auth_info": auth_info

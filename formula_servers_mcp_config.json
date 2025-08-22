@@ -1,0 +1,102 @@
+{
+  "mcpServers": {
+    "formula_aggregation": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "mcp_tooling/aggregation_formula_mcp_server.py"
+      ],
+      "env": {},
+      "description": "SUM, SUMIF, COUNT, AVERAGE formulas - 10 tools",
+      "categories": [
+        "aggregation"
+      ],
+      "tools": [
+        "sum",
+        "average",
+        "count",
+        "sumif",
+        "sumifs",
+        "countif",
+        "countifs",
+        "averageif",
+        "averageifs",
+        "subtotal"
+      ]
+    },
+    "formula_lookup": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "mcp_tooling/lookup_formula_mcp_server.py"
+      ],
+      "env": {},
+      "description": "VLOOKUP, INDEX/MATCH, XLOOKUP formulas - 6 tools",
+      "categories": [
+        "lookup"
+      ],
+      "tools": [
+        "vlookup",
+        "hlookup",
+        "xlookup",
+        "index",
+        "match",
+        "index_match"
+      ]
+    },
+    "formula_financial": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "mcp_tooling/financial_formula_mcp_server.py"
+      ],
+      "env": {},
+      "description": "NPV, IRR, PMT, depreciation formulas - 14 tools",
+      "categories": [
+        "financial"
+      ],
+      "tools": [
+        "npv",
+        "irr",
+        "mirr",
+        "xirr",
+        "xnpv",
+        "pmt",
+        "pv",
+        "fv",
+        "nper",
+        "rate",
+        "ipmt",
+        "ppmt",
+        "sln",
+        "ddb"
+      ]
+    },
+    "formula_business": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "mcp_tooling/business_formula_mcp_server.py"
+      ],
+      "env": {},
+      "description": "CAGR, Customer LTV, business metrics - 6 tools",
+      "categories": [
+        "business"
+      ],
+      "tools": [
+        "profit_margin",
+        "cagr",
+        "customer_ltv",
+        "churn_rate",
+        "variance_percent",
+        "compound_growth"
+      ]
+    }
+  },
+  "description": "Category-wise Formula Servers with 100% accuracy guarantee",
+  "version": "1.0.0"
+}

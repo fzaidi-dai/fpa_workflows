@@ -41,6 +41,41 @@ def get_batch_ops():
         batch_ops = BatchOperations(service)
     return batch_ops
 
+
+class GoogleSheetsValidationTools:
+    """
+    Focused MCP tools for Google Sheets validation operations.
+    
+    This specialized server handles all validation needs:
+    - Data validation: dropdown lists, number ranges, custom rules
+    - Data quality checks: empty cells, numeric validation, uniqueness
+    - Business rules: custom validation logic and presets
+    """
+    
+    def __init__(self):
+        self.auth = GoogleSheetsAuth(scope_level='full')
+        self.value_ops = None
+        self.batch_ops = None
+        logger.info("✅ GoogleSheetsValidationTools initialized")
+        
+    def get_value_ops(self):
+        """Get authenticated value operations instance"""
+        if self.value_ops is None:
+            service = self.auth.authenticate()
+            self.value_ops = ValueOperations(service)
+        return self.value_ops
+    
+    def get_batch_ops(self):
+        """Get authenticated batch operations instance"""
+        if self.batch_ops is None:
+            service = self.auth.authenticate()
+            self.batch_ops = BatchOperations(service)
+        return self.batch_ops
+
+
+# Global instance
+validation_tools = GoogleSheetsValidationTools()
+
 @mcp.tool()
 @ErrorHandler.retry_with_backoff(max_retries=3)
 async def add_data_validation(
@@ -75,7 +110,7 @@ async def add_data_validation(
             }
         }
         
-        ops = get_batch_ops()
+        ops = validation_tools.get_batch_ops()
         result = ops.batch_update(spreadsheet_id, [request])
         
         response = {
@@ -110,7 +145,7 @@ async def validate_data_quality(
         Dictionary containing validation results
     """
     try:
-        ops = get_value_ops()
+        ops = validation_tools.get_value_ops()
         values = ops.get_values(spreadsheet_id, range_spec)
         
         validation_results = {
@@ -204,7 +239,7 @@ async def validate_business_rules(
         Dictionary containing business rule validation results
     """
     try:
-        ops = get_value_ops()
+        ops = validation_tools.get_value_ops()
         values = ops.get_values(spreadsheet_id, range_spec)
         
         validation_results = {
